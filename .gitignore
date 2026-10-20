@@ -18,6 +18,11 @@ android/app/*.iml
 android/app/release/
 android/app/debug/
 
+# APKs/AAB de prueba copiados a la raíz para instalar en dispositivos físicos (no son código
+# fuente, se regeneran con `./gradlew assembleDebug`)
+*.apk
+*.aab
+
 # Firma de la app: NUNCA versionar el keystore ni sus credenciales
 *.keystore
 *.jks

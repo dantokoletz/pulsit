@@ -232,14 +232,12 @@ describe('validateCustomConfig', () => {
       buttons: '5',
       stimulusType: 'both',
       reposition: 'true',
-      sound: true,
       maxSequenceLength: '8',
     });
     expect(config).toEqual({
       buttons: 5,
       stimulusType: 'both',
       reposition: true,
-      sound: true,
       maxSequenceLength: 8,
     });
   });

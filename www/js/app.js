@@ -22,6 +22,7 @@ const hapticsEngine = new HapticsEngine();
 
 const screens = {
   start: document.getElementById('screen-start'),
+  settings: document.getElementById('screen-settings'),
   custom: document.getElementById('screen-custom'),
   game: document.getElementById('screen-game'),
 };
@@ -36,7 +37,6 @@ const el = {
   buttonsInput: document.getElementById('custom-buttons'),
   stimulusTypeSelect: document.getElementById('custom-stimulus-type'),
   repositionCheckbox: document.getElementById('custom-reposition'),
-  soundCheckbox: document.getElementById('custom-sound'),
   maxLengthInput: document.getElementById('custom-max-length'),
   gameBoard: document.getElementById('game-board'),
   statusPhase: document.getElementById('status-phase'),
@@ -45,7 +45,10 @@ const el = {
   levelBadge: document.getElementById('level-badge'),
   progressTrack: document.getElementById('progress-track'),
   progressFill: document.getElementById('progress-fill'),
-  colorblindToggle: document.getElementById('colorblind-toggle'),
+  btnSettingsOpen: document.getElementById('btn-settings-open'),
+  btnSettingsBack: document.getElementById('btn-settings-back'),
+  settingsSoundCheckbox: document.getElementById('settings-sound'),
+  settingsColorblindCheckbox: document.getElementById('settings-colorblind'),
 };
 
 let currentController = null;
@@ -53,6 +56,7 @@ let currentMode = null; // 'campaign' | 'custom'
 let currentCampaignPhase = 1;
 let lastGameStart = null; // { mode, config, phaseLabel, levelNumber } — para "Reiniciar nivel"
 let colorblindMode = false;
+let soundEnabled = true;
 let currentBest = 0;
 
 function showScreen(name) {
@@ -92,8 +96,6 @@ function updateLevelBadge(levelNumber) {
 async function startGame(mode, config, phaseLabel, levelNumber = null) {
   currentMode = mode;
   lastGameStart = { mode, config, phaseLabel, levelNumber };
-  audioEngine.setEnabled(config.sound !== false);
-  hapticsEngine.setEnabled(config.sound !== false);
   showScreen('game');
   setGameMessage('');
   updateLevelBadge(levelNumber);
@@ -171,16 +173,8 @@ async function playCampaignPhase(phaseNumber) {
   await startGame('campaign', config, phaseLabel, phaseNumber);
 }
 
-async function initStartScreen() {
-  audioEngine.setEnabled(true);
+function initStartScreen() {
   showScreen('start');
-
-  colorblindMode = await storageService.getColorblindMode();
-  el.colorblindToggle.checked = colorblindMode;
-  el.colorblindToggle.addEventListener('change', async () => {
-    colorblindMode = el.colorblindToggle.checked;
-    await storageService.setColorblindMode(colorblindMode);
-  });
 
   el.btnPlay.addEventListener('click', async () => {
     const unlockedPhase = await storageService.getCampaignProgress();
@@ -188,12 +182,38 @@ async function initStartScreen() {
   });
 
   // Sonido de bienvenida en crescendo, disparado tras la primera interacción del usuario
-  // (requisito de las políticas de autoplay de WebView/navegadores).
+  // (requisito de las políticas de autoplay de WebView/navegadores). Respeta el ajuste global
+  // de sonido: si está desactivado, AudioEngine ya ignora la llamada (no-op).
   const playWelcomeOnce = () => {
     audioEngine.playWelcomeCrescendo(2000);
     document.removeEventListener('pointerdown', playWelcomeOnce);
   };
   document.addEventListener('pointerdown', playWelcomeOnce, { once: true });
+}
+
+function initSettingsScreen() {
+  el.settingsSoundCheckbox.checked = soundEnabled;
+  el.settingsColorblindCheckbox.checked = colorblindMode;
+
+  el.settingsSoundCheckbox.addEventListener('change', async () => {
+    soundEnabled = el.settingsSoundCheckbox.checked;
+    audioEngine.setEnabled(soundEnabled);
+    hapticsEngine.setEnabled(soundEnabled);
+    await storageService.setSoundEnabled(soundEnabled);
+  });
+
+  el.settingsColorblindCheckbox.addEventListener('change', async () => {
+    colorblindMode = el.settingsColorblindCheckbox.checked;
+    await storageService.setColorblindMode(colorblindMode);
+  });
+
+  el.btnSettingsOpen.addEventListener('click', () => {
+    showScreen('settings');
+  });
+
+  el.btnSettingsBack.addEventListener('click', () => {
+    showScreen('start');
+  });
 }
 
 function initCustomScreen() {
@@ -203,7 +223,6 @@ function initCustomScreen() {
       buttonsInput: el.buttonsInput,
       stimulusTypeSelect: el.stimulusTypeSelect,
       repositionCheckbox: el.repositionCheckbox,
-      soundCheckbox: el.soundCheckbox,
       maxLengthInput: el.maxLengthInput,
     },
     storageService,
@@ -239,7 +258,15 @@ function initGameScreen() {
 }
 
 async function init() {
-  await initStartScreen();
+  // Preferencias globales (sonido/háptica, modo daltónico), cargadas una sola vez antes de
+  // cablear cualquier pantalla, para que ya estén listas incluso para el sonido de bienvenida.
+  soundEnabled = await storageService.getSoundEnabled();
+  colorblindMode = await storageService.getColorblindMode();
+  audioEngine.setEnabled(soundEnabled);
+  hapticsEngine.setEnabled(soundEnabled);
+
+  initStartScreen();
+  initSettingsScreen();
   initCustomScreen();
   initGameScreen();
 }

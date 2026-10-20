@@ -22,11 +22,27 @@
       <div class="menu">
         <button id="btn-play" type="button" class="btn btn--primary">Jugar</button>
         <button id="btn-custom-open" type="button" class="btn btn--secondary">Personalizado</button>
+        <button id="btn-settings-open" type="button" class="btn btn--ghost">⚙ Ajustes</button>
       </div>
-      <label class="field field--checkbox accessibility-toggle">
-        <input id="colorblind-toggle" type="checkbox" />
-        <span>Modo daltónico (formas además de color)</span>
-      </label>
+    </section>
+
+    <section id="screen-settings" class="screen">
+      <h2 class="screen-title">Ajustes</h2>
+      <div class="custom-form">
+        <label class="field field--checkbox">
+          <input id="settings-sound" type="checkbox" checked />
+          <span>Sonido y vibración activados</span>
+        </label>
+
+        <label class="field field--checkbox">
+          <input id="settings-colorblind" type="checkbox" />
+          <span>Modo daltónico (formas además de color)</span>
+        </label>
+
+        <div class="menu">
+          <button id="btn-settings-back" type="button" class="btn btn--secondary">Volver</button>
+        </div>
+      </div>
     </section>
 
     <section id="screen-custom" class="screen">
@@ -49,11 +65,6 @@
         <label class="field field--checkbox">
           <input id="custom-reposition" type="checkbox" />
           <span>¿Los botones cambian de posición?</span>
-        </label>
-
-        <label class="field field--checkbox">
-          <input id="custom-sound" type="checkbox" checked />
-          <span>Sonido activado</span>
         </label>
 
         <label class="field">

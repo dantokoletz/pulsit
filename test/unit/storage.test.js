@@ -70,7 +70,6 @@ describe('StorageService — configuración personalizada', () => {
       buttons: 7,
       stimulusType: 'numbers',
       reposition: true,
-      sound: false,
       maxSequenceLength: 12,
     };
     await storage.setCustomConfig(config);
@@ -152,6 +151,31 @@ describe('StorageService — modo daltónico', () => {
     await storage.setColorblindMode(true);
     await storage.setColorblindMode(false);
     expect(await storage.getColorblindMode()).toBe(false);
+  });
+});
+
+describe('StorageService — sonido global (y háptica)', () => {
+  let backend;
+  let storage;
+
+  beforeEach(() => {
+    backend = createMemoryBackend();
+    storage = new StorageService(backend);
+  });
+
+  it('está activado por defecto', async () => {
+    expect(await storage.getSoundEnabled()).toBe(true);
+  });
+
+  it('guarda y recupera el estado desactivado', async () => {
+    await storage.setSoundEnabled(false);
+    expect(await storage.getSoundEnabled()).toBe(false);
+  });
+
+  it('guarda y recupera el estado reactivado explícitamente', async () => {
+    await storage.setSoundEnabled(false);
+    await storage.setSoundEnabled(true);
+    expect(await storage.getSoundEnabled()).toBe(true);
   });
 });
 

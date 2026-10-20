@@ -38,19 +38,16 @@ function buildCustomFormDom() {
   const repositionCheckbox = document.createElement('input');
   repositionCheckbox.type = 'checkbox';
 
-  const soundCheckbox = document.createElement('input');
-  soundCheckbox.type = 'checkbox';
-
   const maxLengthInput = document.createElement('input');
   maxLengthInput.type = 'number';
 
   const submitBtn = document.createElement('button');
   submitBtn.type = 'submit';
 
-  form.append(buttonsInput, stimulusTypeSelect, repositionCheckbox, soundCheckbox, maxLengthInput, submitBtn);
+  form.append(buttonsInput, stimulusTypeSelect, repositionCheckbox, maxLengthInput, submitBtn);
   document.body.appendChild(form);
 
-  return { form, buttonsInput, stimulusTypeSelect, repositionCheckbox, soundCheckbox, maxLengthInput, submitBtn };
+  return { form, buttonsInput, stimulusTypeSelect, repositionCheckbox, maxLengthInput, submitBtn };
 }
 
 describe('Modo personalizado — configuración y persistencia', () => {
@@ -81,7 +78,6 @@ describe('Modo personalizado — configuración y persistencia', () => {
     elements.buttonsInput.value = '7';
     elements.stimulusTypeSelect.value = 'both';
     elements.repositionCheckbox.checked = true;
-    elements.soundCheckbox.checked = false;
     elements.maxLengthInput.value = '6';
 
     elements.form.dispatchEvent(new window.Event('submit', { cancelable: true }));
@@ -92,7 +88,6 @@ describe('Modo personalizado — configuración y persistencia', () => {
       buttons: 7,
       stimulusType: 'both',
       reposition: true,
-      sound: false,
       maxSequenceLength: 6,
     };
     expect(onSave).toHaveBeenCalledWith(expectedConfig);
@@ -132,15 +127,19 @@ describe('Modo personalizado — partida con la configuración guardada', () => 
       buttons: 6,
       stimulusType: 'both',
       reposition: true,
-      sound: false,
       maxSequenceLength: 3,
     });
   });
 
-  it('respeta sound:false silenciando el motor de audio durante toda la partida', async () => {
-    const config = await storageService.getCustomConfig();
-    audioEngine.setEnabled(config.sound !== false);
+  it('respeta el ajuste global de sonido desactivado durante toda la partida', async () => {
+    // El sonido ya no es parte de la config por partida: es una preferencia global
+    // (pantalla de Ajustes), independiente de la configuración de modo personalizado.
+    await storageService.setSoundEnabled(false);
+    const soundEnabled = await storageService.getSoundEnabled();
+    audioEngine.setEnabled(soundEnabled);
     expect(audioEngine.enabled).toBe(false);
+
+    const config = await storageService.getCustomConfig();
 
     let buttons = [];
     const controller = new GameController(config, {

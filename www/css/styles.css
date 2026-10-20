@@ -151,12 +151,6 @@ html, body {
   max-width: 320px;
 }
 
-.accessibility-toggle {
-  margin-top: 1.25rem;
-  color: var(--color-muted);
-  font-size: 0.85rem;
-}
-
 .btn {
   font-size: 1.05rem;
   font-weight: 600;

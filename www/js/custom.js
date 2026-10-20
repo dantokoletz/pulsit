@@ -8,7 +8,7 @@ import { validateCustomConfig, MIN_CUSTOM_BUTTONS, MAX_CUSTOM_BUTTONS } from './
  * Conecta un formulario del DOM con la configuración personalizada persistida.
  *
  * @param {object} elements - referencias a los controles del formulario:
- *   { buttonsInput, stimulusTypeSelect, repositionCheckbox, soundCheckbox, maxLengthInput, form }
+ *   { buttonsInput, stimulusTypeSelect, repositionCheckbox, maxLengthInput, form }
  * @param {import('./storage.js').StorageService} storageService
  * @param {(config: object) => void} onSave - invocado con la config validada tras guardar.
  * @param {(error: Error) => void} [onError] - invocado si la configuración ingresada es inválida.
@@ -33,7 +33,6 @@ export class CustomModeForm {
     this.elements.buttonsInput.max = String(MAX_CUSTOM_BUTTONS);
     this.elements.stimulusTypeSelect.value = config.stimulusType;
     this.elements.repositionCheckbox.checked = config.reposition;
-    this.elements.soundCheckbox.checked = config.sound;
     this.elements.maxLengthInput.value = String(config.maxSequenceLength);
     return config;
   }
@@ -43,7 +42,6 @@ export class CustomModeForm {
       buttons: Number(this.elements.buttonsInput.value),
       stimulusType: this.elements.stimulusTypeSelect.value,
       reposition: this.elements.repositionCheckbox.checked,
-      sound: this.elements.soundCheckbox.checked,
       maxSequenceLength: Number(this.elements.maxLengthInput.value),
     };
   }

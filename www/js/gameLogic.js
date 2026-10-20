@@ -178,12 +178,15 @@ export function isPhaseCleared(sequenceLength, maxSequenceLength = DEFAULT_MAX_S
 /**
  * Valida y normaliza una configuración de modo personalizado.
  * Lanza RangeError si algún valor es inválido.
+ *
+ * El sonido NO es parte de esta configuración: es una preferencia global del jugador
+ * (ver storage.getSoundEnabled/setSoundEnabled, pantalla de Ajustes), aplicada igual en
+ * campaña y en modo personalizado.
  */
 export function validateCustomConfig(config) {
   const buttons = Number(config.buttons);
   const stimulusType = config.stimulusType;
   const reposition = Boolean(config.reposition);
-  const sound = config.sound !== false;
   const maxSequenceLength = Number(
     config.maxSequenceLength ?? DEFAULT_MAX_SEQUENCE_LENGTH
   );
@@ -204,7 +207,7 @@ export function validateCustomConfig(config) {
     throw new RangeError(`maxSequenceLength debe ser un entero >= ${MIN_SEQUENCE_LENGTH}`);
   }
 
-  return { buttons, stimulusType, reposition, sound, maxSequenceLength };
+  return { buttons, stimulusType, reposition, maxSequenceLength };
 }
 
 /**

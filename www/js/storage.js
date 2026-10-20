@@ -10,6 +10,7 @@ export const KEYS = {
   CUSTOM_CONFIG: 'pulsit.customConfig',
   BEST_SCORES: 'pulsit.bestScores',
   COLORBLIND_MODE: 'pulsit.colorblindMode',
+  SOUND_ENABLED: 'pulsit.soundEnabled',
 };
 
 /** Clave de mejor puntaje para una fase de campaña dada. */
@@ -20,11 +21,15 @@ export function campaignScoreKey(phaseNumber) {
 /** Clave de mejor puntaje del modo personalizado (un único valor global). */
 export const CUSTOM_SCORE_KEY = 'custom';
 
+/**
+ * El sonido (y la háptica, que se activa/desactiva junto con él) es una preferencia GLOBAL del
+ * jugador, ajustable desde la pantalla de Ajustes — no es parte de la configuración por partida
+ * de modo personalizado, para que también aplique al modo campaña.
+ */
 export const DEFAULT_CUSTOM_CONFIG = {
   buttons: 4,
   stimulusType: 'colors',
   reposition: false,
-  sound: true,
   maxSequenceLength: 10,
 };
 
@@ -146,6 +151,17 @@ export class StorageService {
 
   async setColorblindMode(enabled) {
     await this.backend.set({ key: KEYS.COLORBLIND_MODE, value: String(Boolean(enabled)) });
+    return Boolean(enabled);
+  }
+
+  /** Sonido (y háptica) activados globalmente. Por defecto, activado. */
+  async getSoundEnabled() {
+    const { value } = await this.backend.get({ key: KEYS.SOUND_ENABLED });
+    return value !== 'false';
+  }
+
+  async setSoundEnabled(enabled) {
+    await this.backend.set({ key: KEYS.SOUND_ENABLED, value: String(Boolean(enabled)) });
     return Boolean(enabled);
   }
 }
