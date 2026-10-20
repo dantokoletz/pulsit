@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Pulsit</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <main id="app">
+    <section id="screen-start" class="screen active">
+      <img
+        class="logo"
+        src="assets/logo-cauquenlabs.png"
+        alt="CauquenLabs"
+        width="160"
+        height="160"
+      />
+      <h1 class="title">Pulsit</h1>
+      <p class="subtitle">Memoriza. Repite. Supera cada fase.</p>
+      <div class="menu">
+        <button id="btn-play" type="button" class="btn btn--primary">Jugar</button>
+        <button id="btn-custom-open" type="button" class="btn btn--secondary">Personalizado</button>
+      </div>
+    </section>
+
+    <section id="screen-custom" class="screen">
+      <h2 class="screen-title">Modo personalizado</h2>
+      <form id="custom-form" class="custom-form">
+        <label class="field">
+          <span>Cantidad de botones (3-9)</span>
+          <input id="custom-buttons" type="number" min="3" max="9" required />
+        </label>
+
+        <label class="field">
+          <span>Tipo de estímulo</span>
+          <select id="custom-stimulus-type">
+            <option value="colors">Solo colores</option>
+            <option value="numbers">Solo números</option>
+            <option value="both">Ambos</option>
+          </select>
+        </label>
+
+        <label class="field field--checkbox">
+          <input id="custom-reposition" type="checkbox" />
+          <span>¿Los botones cambian de posición?</span>
+        </label>
+
+        <label class="field field--checkbox">
+          <input id="custom-sound" type="checkbox" checked />
+          <span>Sonido activado</span>
+        </label>
+
+        <label class="field">
+          <span>Longitud máxima de secuencia</span>
+          <input id="custom-max-length" type="number" min="2" value="10" required />
+        </label>
+
+        <div class="menu">
+          <button type="submit" class="btn btn--primary">Jugar</button>
+          <button id="btn-custom-back" type="button" class="btn btn--secondary">Volver</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="screen-game" class="screen">
+      <header class="status-bar">
+        <span id="status-phase">—</span>
+        <span id="status-sequence">—</span>
+        <button id="btn-game-back" type="button" class="btn btn--ghost">Menú</button>
+      </header>
+      <p id="game-message" class="game-message"></p>
+      <div id="game-board" class="game-board"></div>
+    </section>
+  </main>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
