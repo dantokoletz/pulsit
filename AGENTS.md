@@ -24,6 +24,16 @@ cargados vía `<script type="module" src="js/app.js">` en `www/index.html`. Esto
 proyecto a costa de no poder usar sintaxis que el navegador/WebView objetivo no soporte
 nativamente (evitar JSX, TypeScript sin compilar, etc.).
 
+**Importante al agregar un nuevo plugin de Capacitor** (como `@capacitor/preferences` o
+`@capacitor/haptics`): al no haber bundler, **no se puede** `import` el paquete npm como módulo ES
+en `www/js/` (el navegador no resuelve specifiers como `@capacitor/haptics`). El patrón que ya usan
+`storage.js` y `haptics.js` es acceder al plugin en runtime vía
+`window.Capacitor?.Plugins?.<NombrePlugin>` (disponible solo dentro de la app empaquetada), con un
+fallback para desarrollo web (`localStorage`, `navigator.vibrate`, etc.). El paquete npm sigue
+siendo necesario como dependencia (`npm install @capacitor/...` + `npx cap sync`) para que el
+plugin nativo se registre en el proyecto Android, aunque el JS de `www/` nunca lo importe
+directamente.
+
 ## 3. Estructura de carpetas
 
 ```
@@ -43,6 +53,7 @@ pulsit/
 │   │   ├── gameLogic.js       # reglas puras del juego (sin DOM) — testear acá primero
 │   │   ├── game.js            # GameController: orquesta gameLogic + audio + render DOM
 │   │   ├── audio.js           # Web Audio API (tonos, crescendo de bienvenida)
+│   │   ├── haptics.js         # feedback háptico (Haptics / navigator.vibrate)
 │   │   ├── storage.js         # persistencia (Preferences / localStorage)
 │   │   └── custom.js          # formulario de modo personalizado
 │   └── assets/

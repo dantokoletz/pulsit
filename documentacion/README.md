@@ -15,6 +15,7 @@ independiente de la documentación técnica para agentes de IA que vive en la ra
 | [05-audio.md](05-audio.md) | Diseño sonoro: tonos por botón, crescendo de bienvenida |
 | [06-persistencia.md](06-persistencia.md) | Qué se guarda en el dispositivo y cuándo |
 | [07-criterios-de-aceptacion.md](07-criterios-de-aceptacion.md) | Checklist funcional de la especificación original |
+| [08-accesibilidad-y-rejugabilidad.md](08-accesibilidad-y-rejugabilidad.md) | Háptica, modo daltónico, mejor puntaje, rotación de pantalla |
 
 ## Audiencia
 

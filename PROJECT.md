@@ -43,6 +43,19 @@
   circuito impreso provista por el usuario, optimizada de 4K/4.8MB a 1600×900/~160KB con `sharp`);
   también existe `background-circuit.svg` (generado por código, 100% vectorial) como alternativa
   sin dependencia de ninguna imagen externa.
+- **Feedback háptico** (`www/js/haptics.js`, `@capacitor/haptics`): vibración corta en cada toque
+  correcto, patrón distinto en error, y vibración de éxito al superar fase/partida. Se activa/
+  desactiva junto con el flag `sound`. Con fallback a `navigator.vibrate` fuera de la app nativa.
+- **Modo daltónico**: toggle global (persistido) en la pantalla de inicio que superpone una forma
+  fija (círculo, cuadrado, triángulo, etc.) sobre cada botón de tipo "colores", para no depender
+  solo del color (ver `gameLogic.shapeForValue`).
+- **Mejor puntaje**: la pantalla de juego muestra `Secuencia: X / N · Mejor: B`, con el mejor
+  guardado por fase de campaña y uno global para modo personalizado (`storage.getBestScore` /
+  `setBestScore`, nunca retrocede).
+- **Rotación de pantalla verificada**: la app no fija orientación; al rotar, el CSS responsive
+  reacomoda todo automáticamente. Se detectó y corrigió que, en horizontal con tableros de varias
+  filas, el contenido podía no entrar en el alto disponible sin forma de scrollear — se agregó
+  `overflow-y: auto` a `.screen`, verificado con un swipe real en el emulador rotado.
 
 ### En progreso / parcial
 
@@ -145,6 +158,26 @@
   herencia de `#app` (`z-index: 1`) sobre `.cosmic-bg` (`z-index: 0`), se agregó `position: relative;
   z-index: 1` directamente en `.screen` para que la garantía de "los botones quedan por encima del
   fondo" sea explícita y no dependa implícitamente de la estructura del DOM.
+- **Haptics/Preferences sin `import` de npm**: siguiendo el patrón ya usado por `storage.js`,
+  `haptics.js` accede al plugin vía `window.Capacitor?.Plugins?.Haptics` en vez de
+  `import { Haptics } from '@capacitor/haptics'`, porque este proyecto no usa bundler y el
+  navegador no puede resolver ese specifier. El paquete sigue siendo una dependencia npm real
+  (necesaria para que `cap sync` registre el plugin nativo), solo que el JS de `www/` nunca lo
+  importa directamente. Documentado en `AGENTS.md` para que futuros plugins sigan el mismo patrón.
+- **Vibración ligada al flag `sound`, sin control propio**: se evaluó agregar un toggle separado
+  para la vibración, pero se descartó para no sumar una opción más al modo personalizado sin un
+  pedido explícito; `sound` ya representa "feedback sensorial activado" en la práctica.
+- **Modo daltónico aplica solo a botones tipo "colores"**: los de tipo "números"/"ambos" ya tienen
+  un número como identificador independiente del color, así que agregarles también una forma sería
+  ruido visual sin beneficio de accesibilidad real.
+- **Mejor puntaje = longitud de la última ronda completada con éxito**, no la secuencia en la que
+  se falló: es la interpretación más natural de "qué tan lejos llegaste" y se calcula reusando el
+  callback `onRoundResult` que ya existía, sin tocar la lógica de `GameController`.
+- **`overflow-y: auto` en `.screen`**: se detectó al verificar la pregunta del usuario sobre
+  rotación de pantalla — en horizontal, con tableros de varias filas, el contenido podía exceder el
+  alto disponible y quedar parcialmente inalcanzable (sin fix, no había ninguna forma de scroll).
+  Se agregó scroll vertical a nivel de pantalla y se confirmó con un swipe real en el emulador
+  rotado a horizontal.
 
 ## Problemas conocidos / limitaciones
 
@@ -156,6 +189,9 @@
 - No hay pruebas automatizadas de UI/responsive más allá de lo verificado manualmente; se probó en
   un emulador de teléfono (`Medium_Phone_API_37.0`) pero no en un tamaño de tablet (ver
   `documentacion/07-criterios-de-aceptacion.md`).
+- El feedback háptico se verificó por ausencia de errores (logcat limpio, sin excepciones JS) y por
+  los tests unitarios de `HapticsEngine`, pero no se puede confirmar por tacto real desde este
+  entorno de desarrollo automatizado; falta una confirmación sensorial humana.
 
 ## Próximos pasos concretos
 

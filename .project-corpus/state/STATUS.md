@@ -1,6 +1,6 @@
 # STATUS — estado verificado de Pulsit
 
-Última actualización: 2026-10-20 (sesión 2: verificación de build Android + rediseño visual)
+Última actualización: 2026-10-20 (sesión 2: build Android + rediseño visual + háptica/accesibilidad/rejugabilidad)
 
 ## Estado verificado (confirmado en este entorno de desarrollo)
 
@@ -34,9 +34,26 @@
   - Botones circulares agrupados en filas fijas por cantidad (`gameLogic.getRowLayout`).
   - Estímulo "ambos" combina color + número en cada botón (antes alternaba botones puros).
   - Número de fase luminoso, barra de progreso de la secuencia, y barra "Reiniciar nivel".
-  - Fondo "futurista" estilo circuito como recurso SVG reemplazable
-    (`www/assets/background-circuit.svg`), con los botones garantizados por encima (`z-index`
-    explícito en `.screen`).
+  - Fondo "futurista" estilo circuito, con los botones garantizados por encima (`z-index`
+    explícito en `.screen`). El fondo activo final es `www/assets/background-circuit.webp` (foto
+    de circuito real provista por el usuario, optimizada con `sharp` de 4.8MB a ~160KB);
+    `background-circuit.svg` (generado por código) quedó como alternativa sin imagen externa.
+- **Tres mejoras agregadas a pedido del usuario** ("¿se puede mejorar/ampliar?" → "agrega los
+  tres"), verificadas en navegador y con rebuild + reinstalación completa en el emulador Android:
+  - **Feedback háptico** (`www/js/haptics.js`, `@capacitor/haptics`): vibración en cada toque
+    (distinta para acierto/error/éxito), ligada al flag `sound`. Verificado por logcat limpio (sin
+    excepciones); no se puede confirmar por tacto real desde este entorno automatizado.
+  - **Modo daltónico**: toggle global en pantalla de inicio, forma fija superpuesta en botones de
+    color (9 formas distintas). Verificado visualmente en navegador y en el emulador.
+  - **Mejor puntaje**: `Secuencia: X / N · Mejor: B` en la barra de estado, por fase de campaña y
+    uno global para personalizado, nunca retrocede. Verificado jugando una ronda real.
+- **Rotación de pantalla verificada y corregida**: al pedir confirmación el usuario sobre si la
+  disposición cambia al rotar, se probó forzando landscape vía
+  `adb shell settings put system user_rotation 1` en el emulador. La disposición SÍ se reacomoda
+  (CSS responsive, sin orientación fija en el manifest), pero se detectó que con tableros de varias
+  filas el contenido podía exceder el alto disponible sin forma de hacer scroll. Se corrigió
+  agregando `overflow-y: auto` a `.screen`, confirmado con un `adb shell input swipe` real que
+  reveló la barra "Reiniciar nivel" antes inalcanzable.
 
 ## Bloqueadores
 
@@ -47,6 +64,8 @@
   programáticamente).
 - No se verificó el responsive en un tamaño de tablet (solo se probó en el emulador de teléfono
   `Medium_Phone_API_37.0`).
+- El feedback háptico no se confirmó por tacto real (solo por ausencia de errores); falta
+  verificación sensorial en un dispositivo físico.
 
 ## Detalle técnico relevante para el próximo agente
 
@@ -74,12 +93,15 @@ Emulador disponible: `Medium_Phone_API_37.0` (API 37). Listarlo con
 ## Última acción completada
 
 Se verificó por primera vez el build Android real (debug APK + release AAB sin firmar) y se corrió
-la app en un emulador. Luego, a pedido del usuario: se mejoró el diseño sonoro, se verificó la
-persistencia del modo personalizado a nivel de archivo nativo, y se aplicó un rediseño visual
-completo (tablero en filas fijas con botones redondos, estímulo "ambos" combinado, número de fase
-luminoso, barra de progreso, barra de reinicio de nivel, y fondo tipo circuito reemplazable) — todo
-verificado tanto en navegador como en un rebuild + reinstalación completa en el emulador Android.
-Se actualizó `PROJECT.md` y la documentación funcional con las decisiones tomadas.
+la app en un emulador. Luego, a pedido del usuario, en una secuencia de iteraciones: se mejoró el
+diseño sonoro, se verificó la persistencia del modo personalizado a nivel de archivo nativo, se
+aplicó un rediseño visual completo (tablero en filas fijas con botones redondos, estímulo "ambos"
+combinado, número de fase luminoso, barra de progreso, barra de reinicio de nivel), se reemplazó el
+fondo generado por código por una foto real de circuito optimizada, y finalmente se agregaron
+háptica, modo daltónico y mejor puntaje, además de corregir un problema real de scroll descubierto
+al verificar el comportamiento en rotación horizontal. Todo verificado tanto en navegador como en
+builds reales reinstalados en el emulador Android. 90/90 tests pasando. Se actualizó `PROJECT.md`,
+`AGENTS.md` y la documentación funcional con las decisiones tomadas.
 
 ## Siguiente acción exacta
 
@@ -94,4 +116,6 @@ Se actualizó `PROJECT.md` y la documentación funcional con las decisiones toma
    `documentacion/07-criterios-de-aceptacion.md`.
 4. Cuando CauquenLabs provea el logo definitivo, reemplazar `www/assets/logo-cauquenlabs.png`,
    correr `npx cap sync`, y regenerar los íconos nativos con el Image Asset Studio.
-5. Etiquetar `v0.2.0` una vez firmado y subido el primer build de prueba a Play Console.
+5. Confirmar por tacto real (en un dispositivo físico, no solo el emulador) que el feedback háptico
+   se siente bien calibrado (intensidad/duración de los patrones de acierto/error/éxito).
+6. Etiquetar `v0.2.0` una vez firmado y subido el primer build de prueba a Play Console.

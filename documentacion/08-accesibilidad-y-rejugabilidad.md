@@ -1,0 +1,64 @@
+# 8. Accesibilidad, feedback háptico y rejugabilidad
+
+Mejoras agregadas tras el lanzamiento inicial, a pedido del usuario.
+
+## 8.1 Feedback háptico
+
+Cada vez que el jugador toca un botón, el dispositivo vibra brevemente, reforzando el acierto o el
+error sin depender solo de la vista/oído:
+
+- **Toque correcto** (parcial o el que completa la ronda): vibración corta y suave.
+- **Toque incorrecto** (fin de partida): patrón de vibración distinto, más marcado.
+- **Fase/partida superada**: vibración de "éxito".
+
+Reglas:
+- Se activa/desactiva junto con el sonido (el flag `sound` de la configuración controla ambos; no
+  hay un control separado para la vibración).
+- En un dispositivo o navegador sin soporte de vibración, simplemente no pasa nada (no genera
+  errores).
+
+Fuente de verdad en código: `www/js/haptics.js` (`HapticsEngine`).
+
+## 8.2 Modo daltónico
+
+Un toggle en la pantalla de inicio ("Modo daltónico (formas además de color)") hace que, además del
+color, cada botón de tipo "colores" muestre una **forma fija** (círculo, cuadrado, triángulo,
+rombo, estrella, cruz, triángulo invertido, hexágono, estrella de cuatro puntas — una por cada
+valor posible, 0 a 8), para poder jugar sin depender de distinguir los colores de la paleta.
+
+- Es una preferencia **global**, persistida en el dispositivo, independiente de si se está jugando
+  en modo campaña o personalizado.
+- Solo afecta a los botones de tipo "colores". Los de tipo "números" o "ambos" ya tienen un número
+  como identificador independiente del color, así que no necesitan una forma adicional.
+- El `aria-label` de cada botón también menciona el nombre de la forma, para lectores de pantalla.
+
+Fuente de verdad en código: `www/js/gameLogic.js` (`shapeForValue`, `shapeNameForValue`),
+`www/js/game.js` (`createButtonElement`).
+
+## 8.3 Mejor puntaje
+
+Durante la partida, la barra de estado muestra, junto al progreso de la secuencia actual, el mejor
+resultado histórico para esa fase (o para el modo personalizado): `Secuencia: X / N · Mejor: B`.
+
+- En modo campaña, el mejor puntaje se guarda **por fase** (la fase 3 tiene su propio mejor,
+  independiente de la fase 5, por ejemplo).
+- En modo personalizado, hay un único mejor puntaje global (no depende de la configuración elegida
+  esa partida).
+- "Mejor puntaje" significa la secuencia más larga que el jugador logró **repetir correctamente**
+  (no cuenta la secuencia en la que falló).
+- Nunca retrocede: si ya se alcanzó un 7, un intento posterior que llega a 5 no lo reemplaza.
+
+Fuente de verdad en código: `www/js/storage.js` (`getBestScore`, `setBestScore`,
+`campaignScoreKey`, `CUSTOM_SCORE_KEY`).
+
+## 8.4 Comportamiento al rotar la pantalla
+
+La app no fuerza una orientación fija: si el dispositivo rota a horizontal, la interfaz se
+reacomoda automáticamente (es una página web responsive, no una vista nativa fija). La disposición
+de los botones en filas (ver [01-concepto-y-mecanica.md](01-concepto-y-mecanica.md)) se mantiene
+igual; lo que cambia es el tamaño disponible en pantalla.
+
+Con configuraciones de muchos botones (varias filas) en horizontal, el contenido puede no entrar
+completo en el alto disponible; para eso, la pantalla de juego permite hacer **scroll vertical**
+(verificado manualmente: con 5 botones en horizontal, hay que deslizar hacia arriba para ver la
+barra "Reiniciar nivel", que de otro modo quedaría fuera de la vista).
