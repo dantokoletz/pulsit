@@ -78,7 +78,7 @@ número de fase luminoso.
 
 ## 4.4 Fondo visual
 
-Las tres pantallas comparten un fondo fijo de ambientación ("futurista", estilo circuito: líneas y
-nodos azules/violeta sobre un degradé oscuro, con un pulso suave de resplandor). La imagen del
-fondo vive en un **archivo de recurso reemplazable**, `www/assets/background-circuit.svg`, no está
+Las tres pantallas comparten un fondo fijo de ambientación ("futurista", estilo circuito impreso:
+líneas y nodos azules sobre fondo negro, con un pulso suave de resplandor encima). La imagen del
+fondo vive en un **archivo de recurso reemplazable**, `www/assets/background-circuit.webp`, no está
 embebida en el código: para cambiarla alcanza con reemplazar ese archivo (ver `AGENTS.md`).

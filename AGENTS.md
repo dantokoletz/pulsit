@@ -46,8 +46,9 @@ pulsit/
 │   │   ├── storage.js         # persistencia (Preferences / localStorage)
 │   │   └── custom.js          # formulario de modo personalizado
 │   └── assets/
-│       ├── logo-cauquenlabs.png   # PLACEHOLDER — reemplazar por el logo real de CauquenLabs
-│       └── background-circuit.svg # fondo de las 3 pantallas — reemplazable (ver abajo)
+│       ├── logo-cauquenlabs.png    # PLACEHOLDER — reemplazar por el logo real de CauquenLabs
+│       ├── background-circuit.webp # fondo ACTIVO de las 3 pantallas — reemplazable (ver abajo)
+│       └── background-circuit.svg  # alternativa vectorial generada por código (no referenciada)
 ├── android/                   # proyecto Android generado por Capacitor
 │   └── ...                    # NO MODIFICAR A MANO salvo config nativa justificada (ver §5)
 ├── documentacion/             # documentación FUNCIONAL (qué hace la app, para humanos y agentes)
@@ -60,10 +61,24 @@ pulsit/
 ```
 
 **Assets reemplazables**: `www/assets/logo-cauquenlabs.png` (logo, placeholder) y
-`www/assets/background-circuit.svg` (fondo de las 3 pantallas, estilo circuito) están pensados para
-sobrescribirse sin tocar código: el CSS/HTML los referencia por nombre de archivo
+`www/assets/background-circuit.webp` (fondo activo de las 3 pantallas, foto de circuito impreso)
+están pensados para sobrescribirse sin tocar código: el CSS los referencia por nombre de archivo
 (`www/css/styles.css` → `.cosmic-bg`), así que basta con reemplazar el archivo (manteniendo el
-nombre, o actualizando la referencia si cambia) y correr `npx cap sync`.
+nombre, o actualizando la referencia si cambia) y correr `npx cap sync`. `background-circuit.svg`
+es una alternativa 100% vectorial generada por código (no depende de ninguna imagen externa); para
+usarla en vez del `.webp`, cambiar el `background-image` de `.cosmic-bg` en `styles.css`.
+
+Si se reemplaza el fondo por otra foto/imagen de alta resolución, conviene optimizarla antes
+(reducir a ~1600px de ancho y convertir a WebP) para no inflar el tamaño del APK/bundle; se puede
+hacer con el paquete `sharp` (`npm install --no-save sharp`, no es una dependencia permanente del
+proyecto):
+
+```js
+require('sharp')('mi-imagen.png')
+  .resize(1600, 900, { fit: 'cover' })
+  .webp({ quality: 78 })
+  .toFile('www/assets/background-circuit.webp');
+```
 
 ## 4. Convenciones de código
 

@@ -37,9 +37,12 @@
   (antes alternaba botones puramente de color con puramente numéricos).
 - **Pantalla de juego ampliada**: número de fase luminoso (solo campaña), barra de progreso visual
   de la secuencia actual, y una barra "Reiniciar nivel" para reintentar sin volver al menú.
-- **Fondo visual "futurista" estilo circuito** (`www/assets/background-circuit.svg`, recurso
-  reemplazable) en las 3 pantallas, con un pulso de resplandor en CSS por encima; todo el contenido
-  de cada pantalla tiene `z-index` explícito para garantizar que quede por encima del fondo.
+- **Fondo visual "futurista" estilo circuito** en las 3 pantallas, con un pulso de resplandor en
+  CSS por encima; todo el contenido de cada pantalla tiene `z-index` explícito para garantizar que
+  quede por encima del fondo. El fondo activo es `www/assets/background-circuit.webp` (una foto de
+  circuito impreso provista por el usuario, optimizada de 4K/4.8MB a 1600×900/~160KB con `sharp`);
+  también existe `background-circuit.svg` (generado por código, 100% vectorial) como alternativa
+  sin dependencia de ninguna imagen externa.
 
 ### En progreso / parcial
 
@@ -133,6 +136,11 @@
   El pulso de resplandor se mantuvo como capa CSS aparte (`::before`/`::after`), de modo que sigue
   funcionando aunque se reemplace el SVG por otra imagen. Se usó SVG (vectorial) y no PNG/JPG para
   que se vea nítido en cualquier densidad de pantalla Android sin generar variantes mdpi/hdpi/xhdpi.
+- **Fondo final: foto real optimizada, no el SVG generado**: el usuario proveyó una foto de circuito
+  impreso de alta calidad (4K, 4.8MB) para usar como fondo real. Se optimizó con `sharp`
+  (reescalado a 1600×900 + conversión a WebP, calidad 78) quedando en ~160KB, y se convirtió en el
+  `background-image` activo de `.cosmic-bg`. El SVG generado por código se conservó como alternativa
+  sin dependencia de archivos de imagen externos, pero ya no es el que se usa por defecto.
 - **`z-index` explícito en `.screen`**: aunque el apilamiento ya funcionaba correctamente por
   herencia de `#app` (`z-index: 1`) sobre `.cosmic-bg` (`z-index: 0`), se agregó `position: relative;
   z-index: 1` directamente en `.screen` para que la garantía de "los botones quedan por encima del

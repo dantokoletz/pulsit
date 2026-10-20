@@ -28,18 +28,19 @@ html, body {
 }
 
 /* Fondo "futurista" estilo circuito. La imagen vive en un archivo de recurso reemplazable
-   (www/assets/background-circuit.svg, ver AGENTS.md) en vez de estar embebida en el CSS: para
+   (www/assets/background-circuit.webp, ver AGENTS.md) en vez de estar embebida en el CSS: para
    cambiar el fondo alcanza con sobrescribir ese archivo (o apuntar background-image a uno nuevo)
-   sin tocar el resto de los estilos. Al ser SVG (vectorial), se ve nítido en cualquier densidad
-   de pantalla Android sin necesitar variantes mdpi/hdpi/xhdpi. El pulso de resplandor (::before/
-   ::after) es una capa aparte en CSS, así que sigue funcionando aunque se reemplace la imagen. */
+   sin tocar el resto de los estilos. También existe background-circuit.svg (generado por código,
+   vectorial) como alternativa más liviana si se prefiere no depender de un archivo de imagen
+   externo. El pulso de resplandor (::before/::after) es una capa aparte en CSS, así que sigue
+   funcionando aunque se reemplace la imagen. */
 .cosmic-bg {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   background-color: #03040a;
-  background-image: url('../assets/background-circuit.svg');
+  background-image: url('../assets/background-circuit.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
