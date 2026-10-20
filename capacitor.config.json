@@ -1,0 +1,6 @@
+{
+  "appId": "com.cauquenlabs.pulsit",
+  "appName": "Pulsit",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}

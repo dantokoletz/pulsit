@@ -1,0 +1,29 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# Vitest / coverage
+coverage/
+.vitest-cache/
+
+# Android / Gradle (generado por Capacitor + Android Studio; no se versiona el build)
+android/app/build/
+android/build/
+android/.gradle/
+android/captures/
+android/local.properties
+android/.idea/
+android/*.iml
+android/app/*.iml
+android/app/release/
+android/app/debug/
+
+# Firma de la app: NUNCA versionar el keystore ni sus credenciales
+*.keystore
+*.jks
+keystore.properties
+
+# Sistema operativo / editor
+.DS_Store
+Thumbs.db
+.vscode/
