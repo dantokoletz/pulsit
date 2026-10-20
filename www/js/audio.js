@@ -1,23 +1,21 @@
 // audio.js
 // Generación de sonido 100% programática con Web Audio API (sin assets externos).
 //
-// Cada "valor" lógico de botón (0..8) tiene asignada una nota fija de una escala pentatónica
-// mayor, de modo que el sonido de cada botón es único, distinguible y agradable al combinarse,
-// y permanece ligado al valor del botón (no a su posición en pantalla) para que el reposicionamiento
-// de fases avanzadas no rompa la asociación sonido-identidad que el jugador memoriza.
-
-// Escala pentatónica mayor de C, extendida a 9 notas (suficiente para MAX_CUSTOM_BUTTONS = 9).
-const NOTE_FREQUENCIES = [
-  261.63, // C4
-  293.66, // D4
-  329.63, // E4
-  392.0, // G4
-  440.0, // A4
-  523.25, // C5
-  587.33, // D5
-  659.25, // E5
-  784.0, // G5
-];
+// Cada "valor" lógico de botón (0..8) tiene asignada una nota fija, de modo que el sonido de
+// cada botón es único, claramente distinguible al oído, y permanece ligado al valor del botón
+// (no a su posición en pantalla) para que el reposicionamiento de fases avanzadas no rompa la
+// asociación sonido-identidad que el jugador memoriza.
+//
+// Las notas están separadas por terceras mayores (4 semitonos) en vez de por grados de una escala
+// pentatónica (2-3 semitonos): con pasos tan chicos, botones consecutivos sonaban demasiado
+// parecidos entre sí, sobre todo en reproducciones cortas. Con terceras mayores, las 9 notas se
+// extienden a lo largo de 3 octavas (A3 a ~D6), maximizando la separación perceptible entre
+// cualquier par de botones mientras se mantiene un patrón armónico consistente (acorde aumentado).
+const BASE_FREQUENCY = 220; // A3
+const SEMITONES_PER_STEP = 4; // tercera mayor
+const NOTE_FREQUENCIES = Array.from({ length: 9 }, (_, i) =>
+  BASE_FREQUENCY * Math.pow(2, (i * SEMITONES_PER_STEP) / 12)
+);
 
 export function frequencyForValue(value) {
   return NOTE_FREQUENCIES[value % NOTE_FREQUENCIES.length];
