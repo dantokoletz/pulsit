@@ -94,6 +94,23 @@ npx cap open android  # abre el proyecto en Android Studio (requiere tenerlo ins
 `npm run cap:sync` y `npm run cap:open:android` son atajos equivalentes definidos en
 `package.json`.
 
+### Compilar desde la línea de comandos (sin abrir la UI de Android Studio)
+
+```bash
+cd android
+export JAVA_HOME="/c/Program Files/Android/Android Studio/jbr"   # o tu JDK 17/21
+export ANDROID_HOME="$HOME/AppData/Local/Android/Sdk"            # ajustar a tu instalación
+export PATH="$JAVA_HOME/bin:$ANDROID_HOME/platform-tools:$PATH"
+./gradlew assembleDebug     # genera app/build/outputs/apk/debug/app-debug.apk
+./gradlew bundleRelease     # genera app/build/outputs/bundle/release/app-release.aab (sin firmar)
+```
+
+El Gradle wrapper está fijado a la **versión 9.5.1** (no la última disponible): si la única JDK a
+mano en la máquina es la JBR que trae Android Studio (frecuentemente muy reciente), Gradle
+8.14.3 puede fallar con `Unsupported class file major version ...`, y las versiones 9.6+ rompen la
+compatibilidad con AGP 8.x. 9.5.1 es la última serie 9.x todavía compatible con AGP 8.x — ver
+`PROJECT.md` ("Decisiones técnicas") antes de cambiar esta versión.
+
 **Advertencia importante:** no modifiques archivos dentro de `android/` manualmente, salvo que se
 trate de configuración nativa justificada y documentada (por ejemplo: permisos en
 `AndroidManifest.xml`, ícono de la app, configuración de firma para release). Cualquier cambio de

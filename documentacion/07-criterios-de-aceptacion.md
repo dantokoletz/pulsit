@@ -17,14 +17,17 @@ Cada ítem indica dónde verificarlo (manualmente y/o con qué test automatizado
 - [x] El progreso y la configuración persisten tras cerrar y reabrir la app.
       → `test/unit/storage.test.js` (sección "persistencia entre instancias").
 - [x] La interfaz es usable en teléfonos (pantalla pequeña) y tablets.
-      → Manual (ver `www/css/styles.css`, media queries en 768px/1024px, botones ≥48px).
-- [ ] El proyecto se abre en Android Studio sin errores de sincronización.
-      → Manual, requiere Android Studio + JDK (no verificable desde este entorno de desarrollo).
+      → Verificado en emulador de teléfono (`Medium_Phone_API_37.0`); CSS con media queries en
+        768px/1024px y botones ≥48px (`www/css/styles.css`). Falta verificar en un tamaño de
+        tablet real/emulado (ver `PROJECT.md`, "Próximos pasos").
+- [x] El proyecto se abre en Android Studio sin errores de sincronización.
+      → Verificado vía `./gradlew assembleDebug` / `bundleRelease` (`BUILD SUCCESSFUL`), que
+        exigen la misma sincronización de Gradle que haría Android Studio al abrir el proyecto.
+        Requirió fijar el Gradle wrapper a la versión 9.5.1 (ver `PROJECT.md`, "Decisiones
+        técnicas").
 - [ ] Se puede generar un `.aab` firmado desde Android Studio.
-      → Manual, ver `README.md` (sección de publicación).
+      → `./gradlew bundleRelease` genera el `.aab` correctamente, pero sin firma de producción
+        (no hay keystore configurado a propósito). Falta el paso manual de generar el keystore y
+        firmar, documentado en `README.md`.
 - [x] Existen `AGENTS.md` y `PROJECT.md` con el nivel de detalle especificado.
 - [x] El historial de Git refleja el desarrollo de forma comprensible.
-
-Los ítems marcados como "Manual" requieren Android Studio con el SDK/JDK instalados, que no están
-disponibles en el entorno donde se generó este proyecto; quedan documentados como siguiente paso
-en `PROJECT.md`.
