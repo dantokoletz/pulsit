@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Pulsit</string>
+    <string name="title_activity_main">Pulsit</string>
+    <string name="package_name">com.cauquenlabs.pulsit</string>
+    <string name="custom_url_scheme">com.cauquenlabs.pulsit</string>
+</resources>
