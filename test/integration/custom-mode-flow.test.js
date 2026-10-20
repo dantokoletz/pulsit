@@ -7,6 +7,7 @@ import { CustomModeForm } from '../../www/js/custom.js';
 import { StorageService, DEFAULT_CUSTOM_CONFIG } from '../../www/js/storage.js';
 import { GameController, GAME_STATE, renderBoard } from '../../www/js/game.js';
 import { AudioEngine } from '../../www/js/audio.js';
+import { COLORBLIND_SHAPES } from '../../www/js/gameLogic.js';
 import { waitFor, clickButton } from './helpers.js';
 
 function createMemoryBackend() {
@@ -184,5 +185,46 @@ describe('Modo personalizado — partida con la configuración guardada', () => 
     });
     const labels = buttons.map((b) => b.textContent).sort();
     expect(labels).toEqual(['1', '2', '3', '4', '5', '6']);
+  });
+
+  it('con modo daltónico activado, los botones "colors" muestran además una forma', () => {
+    const config = { buttons: 5, stimulusType: 'colors', reposition: false, maxSequenceLength: 10 };
+    let buttons = [];
+    new GameController(config, {
+      audioEngine,
+      callbacks: {
+        onLayoutChange(layout, buttonValues) {
+          buttons = renderBoard(container, layout, buttonValues, () => {}, /* colorblindMode */ true);
+        },
+      },
+    });
+
+    expect(buttons).toHaveLength(5);
+    buttons.forEach((btn) => {
+      expect(btn.classList.contains('game-button--shape')).toBe(true);
+      expect(COLORBLIND_SHAPES).toContain(btn.textContent);
+      expect(btn.style.backgroundColor).not.toBe('');
+      expect(btn.getAttribute('aria-label')).toMatch(/forma:/);
+    });
+    // Las 5 formas deben ser distintas entre sí (una por valor lógico de botón).
+    expect(new Set(buttons.map((b) => b.textContent)).size).toBe(5);
+  });
+
+  it('sin modo daltónico (por defecto), los botones "colors" no muestran forma alguna', () => {
+    const config = { buttons: 4, stimulusType: 'colors', reposition: false, maxSequenceLength: 10 };
+    let buttons = [];
+    new GameController(config, {
+      audioEngine,
+      callbacks: {
+        onLayoutChange(layout, buttonValues) {
+          buttons = renderBoard(container, layout, buttonValues, () => {});
+        },
+      },
+    });
+
+    buttons.forEach((btn) => {
+      expect(btn.classList.contains('game-button--shape')).toBe(false);
+      expect(btn.textContent).toBe('');
+    });
   });
 });

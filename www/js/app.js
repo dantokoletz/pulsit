@@ -1,8 +1,9 @@
 // app.js
 // Punto de entrada de Pulsit: navegación entre pantallas e inicialización de módulos.
 
-import { StorageService } from './storage.js';
+import { StorageService, campaignScoreKey, CUSTOM_SCORE_KEY } from './storage.js';
 import { AudioEngine } from './audio.js';
+import { HapticsEngine } from './haptics.js';
 import { CustomModeForm } from './custom.js';
 import {
   GameController,
@@ -17,6 +18,7 @@ import { getPhaseConfig } from './gameLogic.js';
 
 const storageService = new StorageService();
 const audioEngine = new AudioEngine();
+const hapticsEngine = new HapticsEngine();
 
 const screens = {
   start: document.getElementById('screen-start'),
@@ -43,12 +45,15 @@ const el = {
   levelBadge: document.getElementById('level-badge'),
   progressTrack: document.getElementById('progress-track'),
   progressFill: document.getElementById('progress-fill'),
+  colorblindToggle: document.getElementById('colorblind-toggle'),
 };
 
 let currentController = null;
 let currentMode = null; // 'campaign' | 'custom'
 let currentCampaignPhase = 1;
 let lastGameStart = null; // { mode, config, phaseLabel, levelNumber } — para "Reiniciar nivel"
+let colorblindMode = false;
+let currentBest = 0;
 
 function showScreen(name) {
   Object.entries(screens).forEach(([key, section]) => {
@@ -62,9 +67,11 @@ function setGameMessage(text, kind = '') {
   if (kind) el.gameMessage.classList.add(`game-message--${kind}`);
 }
 
-function updateStatus({ phaseLabel, sequenceLength, maxSequenceLength }) {
+function updateStatus({ phaseLabel, sequenceLength, maxSequenceLength, best }) {
   el.statusPhase.textContent = phaseLabel;
-  el.statusSequence.textContent = `Secuencia: ${sequenceLength} / ${maxSequenceLength}`;
+  el.statusSequence.textContent =
+    `Secuencia: ${sequenceLength} / ${maxSequenceLength}` +
+    (best > 0 ? `   ·   Mejor: ${best}` : '');
 
   const progress = maxSequenceLength > 0 ? Math.min(100, (sequenceLength / maxSequenceLength) * 100) : 0;
   el.progressFill.style.width = `${progress}%`;
@@ -86,20 +93,29 @@ async function startGame(mode, config, phaseLabel, levelNumber = null) {
   currentMode = mode;
   lastGameStart = { mode, config, phaseLabel, levelNumber };
   audioEngine.setEnabled(config.sound !== false);
+  hapticsEngine.setEnabled(config.sound !== false);
   showScreen('game');
   setGameMessage('');
   updateLevelBadge(levelNumber);
-  updateStatus({ phaseLabel, sequenceLength: 0, maxSequenceLength: config.maxSequenceLength });
+
+  const scoreKey = mode === 'campaign' ? campaignScoreKey(levelNumber) : CUSTOM_SCORE_KEY;
+  currentBest = await storageService.getBestScore(scoreKey);
+  updateStatus({ phaseLabel, sequenceLength: 0, maxSequenceLength: config.maxSequenceLength, best: currentBest });
 
   let buttonElements = [];
 
   currentController = new GameController(config, {
     audioEngine,
+    hapticsEngine,
     callbacks: {
       onLayoutChange(layout, buttonValues) {
-        buttonElements = renderBoard(el.gameBoard, layout, buttonValues, (position) => {
-          currentController.handlePlayerInput(position);
-        });
+        buttonElements = renderBoard(
+          el.gameBoard,
+          layout,
+          buttonValues,
+          (position) => currentController.handlePlayerInput(position),
+          colorblindMode
+        );
       },
       onHighlight(position) {
         highlightButton(buttonElements, position);
@@ -111,11 +127,15 @@ async function startGame(mode, config, phaseLabel, levelNumber = null) {
           setGameMessage('Observa la secuencia...');
         }
       },
-      onRoundResult({ sequenceLength }) {
-        updateStatus({ phaseLabel, sequenceLength, maxSequenceLength: config.maxSequenceLength });
+      async onRoundResult({ sequenceLength }) {
+        if (sequenceLength > currentBest) {
+          currentBest = await storageService.setBestScore(scoreKey, sequenceLength);
+        }
+        updateStatus({ phaseLabel, sequenceLength, maxSequenceLength: config.maxSequenceLength, best: currentBest });
       },
       async onPhaseCleared() {
         audioEngine.playPhaseCleared();
+        hapticsEngine.notifySuccess();
         if (currentMode === 'campaign') {
           await storageService.setCampaignProgress(
             getNextPhase(currentCampaignPhase) || currentCampaignPhase
@@ -154,6 +174,13 @@ async function playCampaignPhase(phaseNumber) {
 async function initStartScreen() {
   audioEngine.setEnabled(true);
   showScreen('start');
+
+  colorblindMode = await storageService.getColorblindMode();
+  el.colorblindToggle.checked = colorblindMode;
+  el.colorblindToggle.addEventListener('change', async () => {
+    colorblindMode = el.colorblindToggle.checked;
+    await storageService.setColorblindMode(colorblindMode);
+  });
 
   el.btnPlay.addEventListener('click', async () => {
     const unlockedPhase = await storageService.getCampaignProgress();

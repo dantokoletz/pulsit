@@ -13,6 +13,9 @@ import {
   isPhaseCleared,
   getRowLayout,
   validateCustomConfig,
+  shapeForValue,
+  shapeNameForValue,
+  COLORBLIND_SHAPES,
   MIN_CUSTOM_BUTTONS,
   MAX_CUSTOM_BUTTONS,
 } from '../../www/js/gameLogic.js';
@@ -268,5 +271,23 @@ describe('validateCustomConfig', () => {
     expect(() =>
       validateCustomConfig({ buttons: 4, stimulusType: 'colors', maxSequenceLength: 'abc' })
     ).toThrow(RangeError);
+  });
+});
+
+describe('modo daltónico: shapeForValue / shapeNameForValue', () => {
+  it('asigna una forma distinta a cada uno de los 9 valores posibles', () => {
+    const shapes = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8].map(shapeForValue));
+    expect(shapes.size).toBe(COLORBLIND_SHAPES.length);
+  });
+
+  it('hace wrap-around si el valor excede el tamaño de la lista de formas', () => {
+    expect(shapeForValue(9)).toBe(shapeForValue(0));
+  });
+
+  it('cada forma tiene un nombre legible asociado', () => {
+    [0, 1, 2, 3, 4, 5, 6, 7, 8].forEach((value) => {
+      expect(typeof shapeNameForValue(value)).toBe('string');
+      expect(shapeNameForValue(value).length).toBeGreaterThan(0);
+    });
   });
 });

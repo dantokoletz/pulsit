@@ -206,3 +206,32 @@ export function validateCustomConfig(config) {
 
   return { buttons, stimulusType, reposition, sound, maxSequenceLength };
 }
+
+/**
+ * Modo daltónico: a cada valor lógico de botón (0..8) se le asigna además una FORMA fija,
+ * independiente del color, para que un jugador que no distinga bien los colores de la paleta
+ * (ver game.js, COLOR_PALETTE) pueda igualmente identificar cada botón. Solo se usa en botones
+ * de tipo 'colors' (los de tipo 'numbers'/'both' ya tienen un número como identificador
+ * independiente del color).
+ */
+export const COLORBLIND_SHAPES = ['●', '■', '▲', '◆', '★', '✚', '▼', '⬢', '✦'];
+
+export const COLORBLIND_SHAPE_NAMES = [
+  'círculo',
+  'cuadrado',
+  'triángulo',
+  'rombo',
+  'estrella',
+  'cruz',
+  'triángulo invertido',
+  'hexágono',
+  'estrella de cuatro puntas',
+];
+
+export function shapeForValue(value) {
+  return COLORBLIND_SHAPES[value % COLORBLIND_SHAPES.length];
+}
+
+export function shapeNameForValue(value) {
+  return COLORBLIND_SHAPE_NAMES[value % COLORBLIND_SHAPE_NAMES.length];
+}

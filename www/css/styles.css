@@ -105,6 +105,11 @@ html, body {
   width: 100%;
   max-width: 720px;
   margin: 0 auto;
+  /* En orientación horizontal (o con tableros de muchas filas), el contenido puede superar el
+     alto disponible: sin esto, lo que no entra queda inalcanzable (no habría forma de hacer
+     scroll ni de tocarlo). */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .screen.active {
@@ -144,6 +149,12 @@ html, body {
   gap: 0.75rem;
   width: 100%;
   max-width: 320px;
+}
+
+.accessibility-toggle {
+  margin-top: 1.25rem;
+  color: var(--color-muted);
+  font-size: 0.85rem;
 }
 
 .btn {
@@ -355,6 +366,14 @@ html, body {
   /* Asegura contraste del número también cuando el fondo es un color claro del
      estímulo "ambos" (ver game.js, createButtonElement). */
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+}
+
+/* Modo daltónico: forma blanca semitransparente sobre el color del botón, para identificarlo
+   sin depender del color (ver gameLogic.shapeForValue). */
+.game-button--shape {
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  font-size: clamp(1.4rem, 6vw, 2rem);
 }
 
 .game-button--active {

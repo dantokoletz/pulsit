@@ -8,7 +8,17 @@
 export const KEYS = {
   CAMPAIGN_PROGRESS: 'pulsit.campaignProgress',
   CUSTOM_CONFIG: 'pulsit.customConfig',
+  BEST_SCORES: 'pulsit.bestScores',
+  COLORBLIND_MODE: 'pulsit.colorblindMode',
 };
+
+/** Clave de mejor puntaje para una fase de campaña dada. */
+export function campaignScoreKey(phaseNumber) {
+  return `campaign:${phaseNumber}`;
+}
+
+/** Clave de mejor puntaje del modo personalizado (un único valor global). */
+export const CUSTOM_SCORE_KEY = 'custom';
 
 export const DEFAULT_CUSTOM_CONFIG = {
   buttons: 4,
@@ -89,5 +99,53 @@ export class StorageService {
   async setCustomConfig(config) {
     await this.backend.set({ key: KEYS.CUSTOM_CONFIG, value: JSON.stringify(config) });
     return config;
+  }
+
+  /**
+   * Mapa completo de mejores puntajes guardados: { [clave]: mejorSecuenciaLograda }.
+   * Ver `campaignScoreKey` y `CUSTOM_SCORE_KEY` para las claves usadas.
+   */
+  async getBestScores() {
+    const { value } = await this.backend.get({ key: KEYS.BEST_SCORES });
+    if (!value) return {};
+    try {
+      const parsed = JSON.parse(value);
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch {
+      return {};
+    }
+  }
+
+  /** Mejor secuencia lograda para una clave dada (0 si nunca se jugó). */
+  async getBestScore(key) {
+    const scores = await this.getBestScores();
+    const value = scores[key];
+    return Number.isInteger(value) && value > 0 ? value : 0;
+  }
+
+  /**
+   * Guarda `value` como mejor puntaje de `key`, sin retroceder un valor ya guardado mayor.
+   * Devuelve el mejor puntaje resultante (el guardado, sea el nuevo o el anterior).
+   */
+  async setBestScore(key, value) {
+    const scores = await this.getBestScores();
+    const current = Number.isInteger(scores[key]) ? scores[key] : 0;
+    const best = Math.max(current, value);
+    if (best !== current) {
+      scores[key] = best;
+      await this.backend.set({ key: KEYS.BEST_SCORES, value: JSON.stringify(scores) });
+    }
+    return best;
+  }
+
+  /** Modo daltónico: muestra una forma además del color en los botones de tipo 'colors'. */
+  async getColorblindMode() {
+    const { value } = await this.backend.get({ key: KEYS.COLORBLIND_MODE });
+    return value === 'true';
+  }
+
+  async setColorblindMode(enabled) {
+    await this.backend.set({ key: KEYS.COLORBLIND_MODE, value: String(Boolean(enabled)) });
+    return Boolean(enabled);
   }
 }

@@ -6,6 +6,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GameController, GAME_STATE, buildCampaignConfig, renderBoard, getNextPhase } from '../../www/js/game.js';
 import { getPhaseConfig } from '../../www/js/gameLogic.js';
 import { AudioEngine } from '../../www/js/audio.js';
+import { HapticsEngine } from '../../www/js/haptics.js';
 import { StorageService } from '../../www/js/storage.js';
 import { waitFor, clickButton } from './helpers.js';
 
@@ -34,15 +35,19 @@ async function playCorrectRound(controller, getButtons) {
 describe('Modo campaña — fase 1 (3 botones, colores, sin reposición)', () => {
   let container;
   let audioEngine;
+  let hapticsEngine;
   let storageService;
 
   beforeEach(() => {
     container = document.createElement('div');
     document.body.appendChild(container);
     audioEngine = new AudioEngine(); // sin AudioContext real disponible en jsdom: no-op seguro
+    hapticsEngine = new HapticsEngine({ nativeHaptics: null, vibrateFn: vi.fn() });
     storageService = new StorageService(createMemoryBackend());
     vi.spyOn(audioEngine, 'playTone');
     vi.spyOn(audioEngine, 'playError');
+    vi.spyOn(hapticsEngine, 'impactLight');
+    vi.spyOn(hapticsEngine, 'notifyError');
   });
 
   it('renderiza 3 botones de color con las etiquetas accesibles correctas', () => {
@@ -76,6 +81,7 @@ describe('Modo campaña — fase 1 (3 botones, colores, sin reposición)', () =>
 
     const controller = new GameController(config, {
       audioEngine,
+      hapticsEngine,
       callbacks: {
         onLayoutChange(layout, buttonValues) {
           buttons = renderBoard(container, layout, buttonValues, (position) =>
@@ -108,6 +114,8 @@ describe('Modo campaña — fase 1 (3 botones, colores, sin reposición)', () =>
     expect(controller.sequence).toHaveLength(3);
     expect(await storageService.getCampaignProgress()).toBe(2);
     expect(audioEngine.playTone).toHaveBeenCalled();
+    // Un impacto háptico por cada toque correcto del jugador (2 + 3 toques en las dos rondas).
+    expect(hapticsEngine.impactLight).toHaveBeenCalledTimes(5);
   });
 
   it('un click incorrecto termina la partida en GAME_OVER y reproduce el sonido de error', async () => {
@@ -117,6 +125,7 @@ describe('Modo campaña — fase 1 (3 botones, colores, sin reposición)', () =>
 
     const controller = new GameController(config, {
       audioEngine,
+      hapticsEngine,
       callbacks: {
         onLayoutChange(layout, buttonValues) {
           buttons = renderBoard(container, layout, buttonValues, (position) =>
@@ -139,6 +148,8 @@ describe('Modo campaña — fase 1 (3 botones, colores, sin reposición)', () =>
     await waitFor(() => controller.state === GAME_STATE.GAME_OVER);
     expect(gameOverPayload).toEqual({ sequenceReached: 2 });
     expect(audioEngine.playError).toHaveBeenCalledTimes(1);
+    expect(hapticsEngine.notifyError).toHaveBeenCalledTimes(1);
+    expect(hapticsEngine.impactLight).not.toHaveBeenCalled();
   });
 
   it('en fases con reposición (fase 5), el layout cambia tras una ronda correcta', async () => {

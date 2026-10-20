@@ -12,12 +12,19 @@
     "test:unit": "vitest run test/unit",
     "test:integration": "vitest run test/integration"
   },
-  "keywords": ["pulsit", "simon", "memory-game", "capacitor", "android"],
+  "keywords": [
+    "pulsit",
+    "simon",
+    "memory-game",
+    "capacitor",
+    "android"
+  ],
   "author": "CauquenLabs",
   "license": "UNLICENSED",
   "type": "module",
   "dependencies": {
     "@capacitor/core": "^8.5.3",
+    "@capacitor/haptics": "^8.0.2",
     "@capacitor/preferences": "^8.0.1"
   },
   "devDependencies": {

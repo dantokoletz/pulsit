@@ -1,5 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { StorageService, KEYS, DEFAULT_CUSTOM_CONFIG } from '../../www/js/storage.js';
+import {
+  StorageService,
+  KEYS,
+  DEFAULT_CUSTOM_CONFIG,
+  campaignScoreKey,
+  CUSTOM_SCORE_KEY,
+} from '../../www/js/storage.js';
 
 /** Backend en memoria que imita la interfaz get/set de Capacitor Preferences. */
 function createMemoryBackend() {
@@ -81,6 +87,71 @@ describe('StorageService — configuración personalizada', () => {
   it('vuelve a los valores por defecto si el JSON guardado está corrupto', async () => {
     await backend.set({ key: KEYS.CUSTOM_CONFIG, value: '{not-json' });
     expect(await storage.getCustomConfig()).toEqual(DEFAULT_CUSTOM_CONFIG);
+  });
+});
+
+describe('StorageService — mejores puntajes', () => {
+  let backend;
+  let storage;
+
+  beforeEach(() => {
+    backend = createMemoryBackend();
+    storage = new StorageService(backend);
+  });
+
+  it('devuelve 0 si nunca se jugó esa clave', async () => {
+    expect(await storage.getBestScore(campaignScoreKey(1))).toBe(0);
+    expect(await storage.getBestScore(CUSTOM_SCORE_KEY)).toBe(0);
+  });
+
+  it('guarda y recupera el mejor puntaje de una fase de campaña', async () => {
+    await storage.setBestScore(campaignScoreKey(3), 7);
+    expect(await storage.getBestScore(campaignScoreKey(3))).toBe(7);
+  });
+
+  it('nunca retrocede a un puntaje menor ya alcanzado', async () => {
+    await storage.setBestScore(CUSTOM_SCORE_KEY, 8);
+    await storage.setBestScore(CUSTOM_SCORE_KEY, 5);
+    expect(await storage.getBestScore(CUSTOM_SCORE_KEY)).toBe(8);
+  });
+
+  it('actualiza el puntaje si el nuevo valor es mayor', async () => {
+    await storage.setBestScore(CUSTOM_SCORE_KEY, 4);
+    await storage.setBestScore(CUSTOM_SCORE_KEY, 9);
+    expect(await storage.getBestScore(CUSTOM_SCORE_KEY)).toBe(9);
+  });
+
+  it('mantiene claves de campaña y personalizado independientes entre sí', async () => {
+    await storage.setBestScore(campaignScoreKey(1), 6);
+    await storage.setBestScore(CUSTOM_SCORE_KEY, 9);
+    expect(await storage.getBestScore(campaignScoreKey(1))).toBe(6);
+    expect(await storage.getBestScore(campaignScoreKey(2))).toBe(0);
+    expect(await storage.getBestScore(CUSTOM_SCORE_KEY)).toBe(9);
+  });
+});
+
+describe('StorageService — modo daltónico', () => {
+  let backend;
+  let storage;
+
+  beforeEach(() => {
+    backend = createMemoryBackend();
+    storage = new StorageService(backend);
+  });
+
+  it('está desactivado por defecto', async () => {
+    expect(await storage.getColorblindMode()).toBe(false);
+  });
+
+  it('guarda y recupera el estado activado', async () => {
+    await storage.setColorblindMode(true);
+    expect(await storage.getColorblindMode()).toBe(true);
+  });
+
+  it('guarda y recupera el estado desactivado explícitamente', async () => {
+    await storage.setColorblindMode(true);
+    await storage.setColorblindMode(false);
+    expect(await storage.getColorblindMode()).toBe(false);
   });
 });
 

@@ -12,6 +12,8 @@ import {
   evaluateInput,
   isPhaseCleared,
   getRowLayout,
+  shapeForValue,
+  shapeNameForValue,
   MIN_SEQUENCE_LENGTH,
   TOTAL_CAMPAIGN_PHASES,
 } from './gameLogic.js';
@@ -43,9 +45,10 @@ export const GAME_STATE = {
  *   - onGameOver({ sequenceReached })
  */
 export class GameController {
-  constructor(config, { audioEngine, rng = Math.random, callbacks = {} } = {}) {
+  constructor(config, { audioEngine, hapticsEngine, rng = Math.random, callbacks = {} } = {}) {
     this.config = config;
     this.audioEngine = audioEngine;
+    this.hapticsEngine = hapticsEngine;
     this.rng = rng;
     this.callbacks = callbacks;
 
@@ -112,10 +115,13 @@ export class GameController {
 
     if (result.status === 'wrong') {
       this.audioEngine?.playError();
+      this.hapticsEngine?.notifyError();
       this._setState(GAME_STATE.GAME_OVER, { sequenceReached: this.sequence.length });
       this.callbacks.onGameOver?.({ sequenceReached: this.sequence.length });
       return;
     }
+
+    this.hapticsEngine?.impactLight();
 
     if (result.status === 'correct-partial') {
       return;
@@ -169,8 +175,11 @@ export { COLOR_PALETTE, getNextPhase, TOTAL_CAMPAIGN_PHASES };
  *
  * Devuelve un array PLANO de elementos <button>, en el mismo orden que `layout` (índice =
  * posición de pantalla), independientemente de cómo estén anidados en filas en el DOM.
+ *
+ * @param {boolean} [colorblindMode] - si es true, los botones de tipo 'colors' muestran además
+ *   una forma fija (ver gameLogic.shapeForValue) para no depender solo del color.
  */
-export function renderBoard(container, layout, buttonValues, onPress) {
+export function renderBoard(container, layout, buttonValues, onPress, colorblindMode = false) {
   container.innerHTML = '';
 
   const rowSizes = getRowLayout(layout.length);
@@ -184,7 +193,7 @@ export function renderBoard(container, layout, buttonValues, onPress) {
     for (let i = 0; i < rowSize; i++) {
       const value = layout[position];
       const def = buttonValues[value];
-      const btn = createButtonElement(value, def, position, onPress);
+      const btn = createButtonElement(value, def, position, onPress, colorblindMode);
       row.appendChild(btn);
       buttons.push(btn);
       position++;
@@ -196,7 +205,7 @@ export function renderBoard(container, layout, buttonValues, onPress) {
   return buttons;
 }
 
-function createButtonElement(value, def, position, onPress) {
+function createButtonElement(value, def, position, onPress, colorblindMode) {
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.className = 'game-button';
@@ -204,6 +213,7 @@ function createButtonElement(value, def, position, onPress) {
   btn.dataset.value = String(value);
 
   const color = COLOR_PALETTE[value % COLOR_PALETTE.length];
+  let ariaLabel;
 
   if (def.type === 'colors' || def.type === 'both') {
     btn.style.backgroundColor = color;
@@ -214,13 +224,19 @@ function createButtonElement(value, def, position, onPress) {
   }
 
   if (def.type === 'both') {
-    btn.setAttribute('aria-label', `Botón número ${def.label} de color ${value + 1}`);
+    ariaLabel = `Botón número ${def.label} de color ${value + 1}`;
   } else if (def.type === 'colors') {
-    btn.setAttribute('aria-label', `Botón de color ${value + 1}`);
+    ariaLabel = `Botón de color ${value + 1}`;
+    if (colorblindMode) {
+      btn.textContent = shapeForValue(value);
+      btn.classList.add('game-button--shape');
+      ariaLabel += ` (forma: ${shapeNameForValue(value)})`;
+    }
   } else {
-    btn.setAttribute('aria-label', `Botón número ${def.label}`);
+    ariaLabel = `Botón número ${def.label}`;
   }
 
+  btn.setAttribute('aria-label', ariaLabel);
   btn.addEventListener('click', () => onPress(position));
   return btn;
 }
