@@ -29,6 +29,7 @@ const el = {
   btnCustomOpen: document.getElementById('btn-custom-open'),
   btnCustomBack: document.getElementById('btn-custom-back'),
   btnGameBack: document.getElementById('btn-game-back'),
+  btnRestartLevel: document.getElementById('btn-restart-level'),
   customForm: document.getElementById('custom-form'),
   buttonsInput: document.getElementById('custom-buttons'),
   stimulusTypeSelect: document.getElementById('custom-stimulus-type'),
@@ -39,11 +40,15 @@ const el = {
   statusPhase: document.getElementById('status-phase'),
   statusSequence: document.getElementById('status-sequence'),
   gameMessage: document.getElementById('game-message'),
+  levelBadge: document.getElementById('level-badge'),
+  progressTrack: document.getElementById('progress-track'),
+  progressFill: document.getElementById('progress-fill'),
 };
 
 let currentController = null;
 let currentMode = null; // 'campaign' | 'custom'
 let currentCampaignPhase = 1;
+let lastGameStart = null; // { mode, config, phaseLabel, levelNumber } — para "Reiniciar nivel"
 
 function showScreen(name) {
   Object.entries(screens).forEach(([key, section]) => {
@@ -60,13 +65,30 @@ function setGameMessage(text, kind = '') {
 function updateStatus({ phaseLabel, sequenceLength, maxSequenceLength }) {
   el.statusPhase.textContent = phaseLabel;
   el.statusSequence.textContent = `Secuencia: ${sequenceLength} / ${maxSequenceLength}`;
+
+  const progress = maxSequenceLength > 0 ? Math.min(100, (sequenceLength / maxSequenceLength) * 100) : 0;
+  el.progressFill.style.width = `${progress}%`;
+  el.progressTrack.setAttribute('aria-valuemax', String(maxSequenceLength));
+  el.progressTrack.setAttribute('aria-valuenow', String(sequenceLength));
 }
 
-async function startGame(mode, config, phaseLabel) {
+function updateLevelBadge(levelNumber) {
+  if (levelNumber) {
+    el.levelBadge.textContent = String(levelNumber);
+    el.levelBadge.classList.add('level-badge--visible');
+  } else {
+    el.levelBadge.textContent = '';
+    el.levelBadge.classList.remove('level-badge--visible');
+  }
+}
+
+async function startGame(mode, config, phaseLabel, levelNumber = null) {
   currentMode = mode;
+  lastGameStart = { mode, config, phaseLabel, levelNumber };
   audioEngine.setEnabled(config.sound !== false);
   showScreen('game');
   setGameMessage('');
+  updateLevelBadge(levelNumber);
   updateStatus({ phaseLabel, sequenceLength: 0, maxSequenceLength: config.maxSequenceLength });
 
   let buttonElements = [];
@@ -126,7 +148,7 @@ async function playCampaignPhase(phaseNumber) {
   const phaseLabel = `Fase ${phaseNumber} / ${TOTAL_CAMPAIGN_PHASES} — ${phaseInfo.buttons} botones, ${
     phaseInfo.stimulusType === 'colors' ? 'colores' : 'números'
   }${phaseInfo.reposition ? ' (se mueven)' : ''}`;
-  await startGame('campaign', config, phaseLabel);
+  await startGame('campaign', config, phaseLabel, phaseNumber);
 }
 
 async function initStartScreen() {
@@ -180,6 +202,12 @@ function initGameScreen() {
   el.btnGameBack.addEventListener('click', () => {
     currentController = null;
     showScreen('start');
+  });
+
+  el.btnRestartLevel.addEventListener('click', () => {
+    if (!lastGameStart) return;
+    const { mode, config, phaseLabel, levelNumber } = lastGameStart;
+    startGame(mode, config, phaseLabel, levelNumber);
   });
 }
 

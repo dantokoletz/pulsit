@@ -164,7 +164,7 @@ describe('Modo personalizado — partida con la configuración guardada', () => 
     expect(audioEngine.ctx).toBeNull();
   });
 
-  it('combina colores y números en el tablero cuando stimulusType es "both"', () => {
+  it('cada botón combina color de fondo y número cuando stimulusType es "both"', () => {
     const config = { buttons: 6, stimulusType: 'both', reposition: false, maxSequenceLength: 10 };
     let buttons = [];
     new GameController(config, {
@@ -176,9 +176,13 @@ describe('Modo personalizado — partida con la configuración guardada', () => 
       },
     });
 
-    const numberButtons = buttons.filter((b) => b.classList.contains('game-button--number'));
-    const colorButtons = buttons.filter((b) => !b.classList.contains('game-button--number'));
-    expect(numberButtons.length).toBe(3);
-    expect(colorButtons.length).toBe(3);
+    expect(buttons).toHaveLength(6);
+    buttons.forEach((btn) => {
+      expect(btn.classList.contains('game-button--number')).toBe(true);
+      expect(btn.style.backgroundColor).not.toBe('');
+      expect(btn.textContent).toMatch(/^[1-6]$/);
+    });
+    const labels = buttons.map((b) => b.textContent).sort();
+    expect(labels).toEqual(['1', '2', '3', '4', '5', '6']);
   });
 });

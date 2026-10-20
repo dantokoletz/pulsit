@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
+  <div class="cosmic-bg" aria-hidden="true"></div>
   <main id="app">
     <section id="screen-start" class="screen active">
       <img
@@ -65,12 +66,25 @@
 
     <section id="screen-game" class="screen">
       <header class="status-bar">
-        <span id="status-phase">—</span>
-        <span id="status-sequence">—</span>
-        <button id="btn-game-back" type="button" class="btn btn--ghost">Menú</button>
+        <div class="status-bar__top">
+          <span id="level-badge" class="level-badge" aria-hidden="true"></span>
+          <span id="status-phase">—</span>
+          <button id="btn-game-back" type="button" class="btn btn--ghost">Menú</button>
+        </div>
+        <div
+          class="progress-track"
+          role="progressbar"
+          aria-label="Progreso de la secuencia"
+          aria-valuemin="0"
+          id="progress-track"
+        >
+          <div class="progress-track__fill" id="progress-fill"></div>
+        </div>
+        <span id="status-sequence" class="progress-label">—</span>
       </header>
       <p id="game-message" class="game-message"></p>
       <div id="game-board" class="game-board"></div>
+      <button id="btn-restart-level" type="button" class="restart-bar">↺ Reiniciar nivel</button>
     </section>
   </main>
 

@@ -11,6 +11,7 @@ import {
   generateSequence,
   evaluateInput,
   isPhaseCleared,
+  getRowLayout,
   validateCustomConfig,
   MIN_CUSTOM_BUTTONS,
   MAX_CUSTOM_BUTTONS,
@@ -79,9 +80,10 @@ describe('generateButtonValues', () => {
     expect(values.map((v) => v.label)).toEqual([1, 2, 3, 4, 5]);
   });
 
-  it('alterna colores y números cuando stimulusType es "both"', () => {
+  it('combina color y número en cada botón cuando stimulusType es "both"', () => {
     const values = generateButtonValues(4, 'both');
-    expect(values.map((v) => v.type)).toEqual(['colors', 'numbers', 'colors', 'numbers']);
+    expect(values.every((v) => v.type === 'both')).toBe(true);
+    expect(values.map((v) => v.label)).toEqual([1, 2, 3, 4]);
   });
 
   it('lanza RangeError fuera del rango permitido', () => {
@@ -133,6 +135,27 @@ describe('generateLayout', () => {
     const layout = generateLayout(4, true, previous, () => 0.99);
     expect(layout).toHaveLength(4);
     expect([...layout].sort()).toEqual([0, 1, 2, 3]);
+  });
+});
+
+describe('getRowLayout', () => {
+  it.each([
+    [3, [2, 1]],
+    [4, [2, 2]],
+    [5, [3, 2]],
+    [6, [3, 3]],
+    [7, [3, 3, 1]],
+    [8, [3, 3, 2]],
+    [9, [3, 3, 3]],
+  ])('arma las filas correctas para %i botones', (count, expected) => {
+    expect(getRowLayout(count)).toEqual(expected);
+  });
+
+  it('la suma de los tamaños de fila siempre es igual a `count`', () => {
+    for (let count = MIN_CUSTOM_BUTTONS; count <= MAX_CUSTOM_BUTTONS; count++) {
+      const rows = getRowLayout(count);
+      expect(rows.reduce((a, b) => a + b, 0)).toBe(count);
+    }
   });
 });
 

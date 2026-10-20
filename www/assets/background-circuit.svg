@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 1440" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#03040a" />
+      <stop offset="55%" stop-color="#060a16" />
+      <stop offset="100%" stop-color="#0a1226" />
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="softGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="40" />
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="720" height="1440" fill="url(#bgGrad)" />
+
+  <!-- resplandores suaves de fondo -->
+  <circle cx="150" cy="220" r="200" fill="#6c5ce7" opacity="0.14" filter="url(#softGlow)" />
+  <circle cx="600" cy="1180" r="260" fill="#48dbfb" opacity="0.13" filter="url(#softGlow)" />
+  <circle cx="560" cy="700" r="160" fill="#48dbfb" opacity="0.08" filter="url(#softGlow)" />
+  <circle cx="140" cy="1000" r="180" fill="#9b5de5" opacity="0.08" filter="url(#softGlow)" />
+
+  <!-- pistas tenues (circuito de fondo) -->
+  <g fill="none" stroke="#1c3a66" stroke-width="2.25" opacity="0.5" stroke-linecap="round">
+    <polyline points="180,300 180,180 300,180 300,120 120,120" />
+    <polyline points="420,420 540,420 540,360" />
+    <polyline points="540,960 480,960 480,780" />
+    <polyline points="660,1380 660,1200 720,1200" />
+    <polyline points="240,420 240,540 300,540 300,480" />
+    <polyline points="420,720 360,720 360,660" />
+    <polyline points="480,960 420,960 420,780" />
+    <polyline points="0,960 0,780 0,780" />
+    <polyline points="120,1080 120,1200 300,1200" />
+    <polyline points="0,1200 0,1020 0,1020" />
+    <polyline points="660,420 660,480 720,480 720,660" />
+    <polyline points="480,0 300,0 300,0" />
+    <polyline points="120,1320 120,1440 0,1440" />
+    <polyline points="300,60 300,120 240,120" />
+    <polyline points="240,480 240,600 60,600" />
+    <polyline points="420,240 420,180 360,180 360,120" />
+    <polyline points="540,960 720,960 720,780 600,780 600,720" />
+    <polyline points="480,1020 480,900 540,900 540,1020" />
+    <polyline points="360,840 420,840 420,1020 360,1020" />
+    <polyline points="240,840 420,840 420,660 540,660" />
+    <polyline points="180,720 60,720 60,660" />
+    <polyline points="600,180 540,180 540,240 660,240" />
+    <polyline points="60,1320 60,1260 0,1260 0,1200" />
+    <polyline points="600,960 600,1140 660,1140 660,960" />
+    <polyline points="60,1020 0,1020 0,840" />
+    <polyline points="0,1320 0,1320 0,1260 180,1260 180,1320" />
+  </g>
+
+  <!-- pistas activas (más brillantes, con glow) -->
+  <g fill="none" stroke="#48dbfb" stroke-width="2.75" opacity="0.85" stroke-linecap="round" filter="url(#glow)">
+    <polyline points="60,780 240,780 240,840" />
+    <polyline points="660,1380 660,1440 720,1440" />
+    <polyline points="0,1380 0,1380 0,1260" />
+    <polyline points="180,600 180,540 360,540" />
+    <polyline points="0,180 0,240 0,240" />
+    <polyline points="660,360 660,540 720,540 720,660" />
+    <polyline points="600,1140 720,1140 720,1080" />
+    <polyline points="120,720 0,720 0,660" />
+    <polyline points="360,360 360,480 300,480" />
+    <polyline points="0,1200 0,1380 60,1380 60,1440" />
+    <polyline points="300,240 300,120 420,120 420,60" />
+  </g>
+
+  <!-- nodos / pads -->
+  <g filter="url(#glow)">
+    <circle cx="60" cy="780" r="4.5" fill="#48dbfb" />
+    <circle cx="240" cy="840" r="5.5" fill="#9b5de5" />
+    <circle cx="660" cy="1380" r="6.5" fill="#48dbfb" />
+    <circle cx="720" cy="1440" r="4.5" fill="#9b5de5" />
+    <circle cx="0" cy="1380" r="5.5" fill="#48dbfb" />
+    <circle cx="0" cy="1260" r="6.5" fill="#9b5de5" />
+    <circle cx="180" cy="600" r="4.5" fill="#48dbfb" />
+    <circle cx="360" cy="540" r="5.5" fill="#9b5de5" />
+    <circle cx="0" cy="180" r="6.5" fill="#48dbfb" />
+    <circle cx="0" cy="240" r="4.5" fill="#9b5de5" />
+    <circle cx="660" cy="360" r="5.5" fill="#48dbfb" />
+    <circle cx="720" cy="660" r="6.5" fill="#9b5de5" />
+    <circle cx="600" cy="1140" r="4.5" fill="#48dbfb" />
+    <circle cx="720" cy="1080" r="5.5" fill="#9b5de5" />
+    <circle cx="120" cy="720" r="6.5" fill="#48dbfb" />
+    <circle cx="0" cy="660" r="4.5" fill="#9b5de5" />
+    <circle cx="360" cy="360" r="5.5" fill="#48dbfb" />
+    <circle cx="300" cy="480" r="6.5" fill="#9b5de5" />
+    <circle cx="0" cy="1200" r="4.5" fill="#48dbfb" />
+    <circle cx="60" cy="1440" r="5.5" fill="#9b5de5" />
+    <circle cx="300" cy="240" r="6.5" fill="#48dbfb" />
+    <circle cx="420" cy="60" r="4.5" fill="#9b5de5" />
+  </g>
+  <g fill="#1c3a66" opacity="0.75">
+    <circle cx="180" cy="300" r="3.5" />
+    <circle cx="420" cy="420" r="3.5" />
+    <circle cx="540" cy="960" r="3.5" />
+    <circle cx="660" cy="1380" r="3.5" />
+    <circle cx="240" cy="420" r="3.5" />
+    <circle cx="420" cy="720" r="3.5" />
+    <circle cx="480" cy="960" r="3.5" />
+    <circle cx="0" cy="960" r="3.5" />
+    <circle cx="120" cy="1080" r="3.5" />
+    <circle cx="0" cy="1200" r="3.5" />
+    <circle cx="660" cy="420" r="3.5" />
+    <circle cx="480" cy="0" r="3.5" />
+    <circle cx="120" cy="1320" r="3.5" />
+    <circle cx="300" cy="60" r="3.5" />
+    <circle cx="240" cy="480" r="3.5" />
+    <circle cx="420" cy="240" r="3.5" />
+    <circle cx="540" cy="960" r="3.5" />
+    <circle cx="480" cy="1020" r="3.5" />
+    <circle cx="360" cy="840" r="3.5" />
+    <circle cx="240" cy="840" r="3.5" />
+    <circle cx="180" cy="720" r="3.5" />
+    <circle cx="600" cy="180" r="3.5" />
+    <circle cx="60" cy="1320" r="3.5" />
+    <circle cx="600" cy="960" r="3.5" />
+    <circle cx="60" cy="1020" r="3.5" />
+    <circle cx="0" cy="1320" r="3.5" />
+  </g>
+</svg>

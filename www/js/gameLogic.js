@@ -48,9 +48,12 @@ export function getNextPhase(phaseNumber) {
  * Cada "valor" (0..count-1) tiene un color y/o número fijo que lo identifica, y mantiene
  * siempre el mismo tono de sonido (ver audio.js), sin importar si luego se reposiciona.
  *
+ * Con stimulusType 'both', cada botón combina AMBOS estímulos a la vez (color de fondo +
+ * número), en vez de alternar botones puramente de color con botones puramente numéricos.
+ *
  * @param {number} count - cantidad de botones (3-9)
  * @param {'colors'|'numbers'|'both'} stimulusType
- * @returns {Array<{value:number, type:'colors'|'numbers', label:string|number}>}
+ * @returns {Array<{value:number, type:'colors'|'numbers'|'both', label:string|number}>}
  */
 export function generateButtonValues(count, stimulusType) {
   if (count < MIN_CUSTOM_BUTTONS || count > MAX_CUSTOM_BUTTONS) {
@@ -60,15 +63,11 @@ export function generateButtonValues(count, stimulusType) {
   }
   const values = [];
   for (let i = 0; i < count; i++) {
-    let type = stimulusType;
-    if (stimulusType === 'both') {
-      // Alterna color/número de forma determinística para una distribución estable.
-      type = i % 2 === 0 ? 'colors' : 'numbers';
-    }
+    const type = stimulusType;
     values.push({
       value: i,
       type,
-      label: type === 'numbers' ? i + 1 : i,
+      label: type === 'colors' ? i : i + 1,
     });
   }
   return values;
@@ -86,6 +85,27 @@ export function shuffle(arr, rng = Math.random) {
     [result[i], result[j]] = [result[j], result[i]];
   }
   return result;
+}
+
+/**
+ * Agrupa `count` botones en filas para el tablero, en vez de dejar que se ajusten libremente
+ * al ancho disponible: con 3 o 4 botones se arman filas de a 2 (la última centrada si sobra
+ * uno); con 5 o más, filas de a 3. Ejemplos: 3 → [2,1], 4 → [2,2], 5 → [3,2], 6 → [3,3],
+ * 7 → [3,3,1], 8 → [3,3,2], 9 → [3,3,3].
+ *
+ * @param {number} count
+ * @returns {number[]} cantidad de botones en cada fila, en orden
+ */
+export function getRowLayout(count) {
+  const rowSize = count <= 4 ? 2 : 3;
+  const rows = [];
+  let remaining = count;
+  while (remaining > 0) {
+    const size = Math.min(rowSize, remaining);
+    rows.push(size);
+    remaining -= size;
+  }
+  return rows;
 }
 
 /**

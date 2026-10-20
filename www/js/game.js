@@ -11,6 +11,7 @@ import {
   extendSequence,
   evaluateInput,
   isPhaseCleared,
+  getRowLayout,
   MIN_SEQUENCE_LENGTH,
   TOTAL_CAMPAIGN_PHASES,
 } from './gameLogic.js';
@@ -161,34 +162,67 @@ export function buildCampaignConfig(phaseNumber, maxSequenceLength = 10) {
 export { COLOR_PALETTE, getNextPhase, TOTAL_CAMPAIGN_PHASES };
 
 /**
- * Renderiza el tablero de botones dentro de un contenedor DOM dado.
- * Devuelve un array de elementos <button> indexados por posición de pantalla.
+ * Renderiza el tablero de botones dentro de un contenedor DOM dado, agrupado en filas según
+ * `getRowLayout` (en vez de un grid que se ajusta libremente al ancho disponible), para que la
+ * disposición sea siempre la misma figura (ver gameLogic.getRowLayout) sin importar el tamaño de
+ * pantalla.
+ *
+ * Devuelve un array PLANO de elementos <button>, en el mismo orden que `layout` (índice =
+ * posición de pantalla), independientemente de cómo estén anidados en filas en el DOM.
  */
 export function renderBoard(container, layout, buttonValues, onPress) {
   container.innerHTML = '';
-  container.style.setProperty('--button-count', String(layout.length));
 
-  return layout.map((value, position) => {
-    const def = buttonValues[value];
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'game-button';
-    btn.dataset.position = String(position);
-    btn.dataset.value = String(value);
+  const rowSizes = getRowLayout(layout.length);
+  const buttons = [];
+  let position = 0;
 
-    if (def.type === 'colors') {
-      btn.style.backgroundColor = COLOR_PALETTE[value % COLOR_PALETTE.length];
-      btn.setAttribute('aria-label', `Botón de color ${value + 1}`);
-    } else {
-      btn.textContent = String(def.label);
-      btn.classList.add('game-button--number');
-      btn.setAttribute('aria-label', `Botón número ${def.label}`);
+  rowSizes.forEach((rowSize) => {
+    const row = document.createElement('div');
+    row.className = 'game-board-row';
+
+    for (let i = 0; i < rowSize; i++) {
+      const value = layout[position];
+      const def = buttonValues[value];
+      const btn = createButtonElement(value, def, position, onPress);
+      row.appendChild(btn);
+      buttons.push(btn);
+      position++;
     }
 
-    btn.addEventListener('click', () => onPress(position));
-    container.appendChild(btn);
-    return btn;
+    container.appendChild(row);
   });
+
+  return buttons;
+}
+
+function createButtonElement(value, def, position, onPress) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'game-button';
+  btn.dataset.position = String(position);
+  btn.dataset.value = String(value);
+
+  const color = COLOR_PALETTE[value % COLOR_PALETTE.length];
+
+  if (def.type === 'colors' || def.type === 'both') {
+    btn.style.backgroundColor = color;
+  }
+  if (def.type === 'numbers' || def.type === 'both') {
+    btn.textContent = String(def.label);
+    btn.classList.add('game-button--number');
+  }
+
+  if (def.type === 'both') {
+    btn.setAttribute('aria-label', `Botón número ${def.label} de color ${value + 1}`);
+  } else if (def.type === 'colors') {
+    btn.setAttribute('aria-label', `Botón de color ${value + 1}`);
+  } else {
+    btn.setAttribute('aria-label', `Botón número ${def.label}`);
+  }
+
+  btn.addEventListener('click', () => onPress(position));
+  return btn;
 }
 
 /** Aplica/retira la clase de resaltado visual sobre el botón de una posición. */
