@@ -17,9 +17,9 @@ Cada ítem indica dónde verificarlo (manualmente y/o con qué test automatizado
 - [x] El progreso y la configuración persisten tras cerrar y reabrir la app.
       → `test/unit/storage.test.js` (sección "persistencia entre instancias").
 - [x] La interfaz es usable en teléfonos (pantalla pequeña) y tablets.
-      → Verificado en emulador de teléfono (`Medium_Phone_API_37.0`); CSS con media queries en
-        768px/1024px y botones ≥48px (`www/css/styles.css`). Falta verificar en un tamaño de
-        tablet real/emulado (ver `PROJECT.md`, "Próximos pasos").
+      → Verificado en emulador de teléfono (`Medium_Phone_API_37.0`, 1080×2400) y en emulador de
+        tablet (`Pulsit_Tablet`, perfil "10.1in WXGA", 800×1280 @ 160dpi); CSS con media queries
+        en 768px/1024px y botones ≥48px (`www/css/styles.css`).
 - [x] El proyecto se abre en Android Studio sin errores de sincronización.
       → Verificado vía `./gradlew assembleDebug` / `bundleRelease` (`BUILD SUCCESSFUL`), que
         exigen la misma sincronización de Gradle que haría Android Studio al abrir el proyecto.

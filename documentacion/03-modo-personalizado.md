@@ -10,8 +10,11 @@ fija del modo campaña.
 | Cantidad de botones | 3 a 9 | 4 |
 | Tipo de estímulo | `colores` / `números` / `ambos` | colores |
 | ¿Cambian de posición? | Sí / No | No |
-| Sonido | Activado / Desactivado | Activado |
 | Longitud máxima de secuencia | Entero ≥ 2 | 10 |
+
+El sonido (y la vibración) **no** es un parámetro de esta pantalla: es un ajuste global, igual en
+campaña y en personalizado, configurable desde Ajustes (ver
+[08-accesibilidad-y-rejugabilidad.md](08-accesibilidad-y-rejugabilidad.md)).
 
 ### Tipo de estímulo "ambos"
 

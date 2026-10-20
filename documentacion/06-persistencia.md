@@ -11,6 +11,7 @@ reabrir la app.
 | Configuración de modo personalizado | `pulsit.customConfig` | JSON | ver [03-modo-personalizado.md](03-modo-personalizado.md) |
 | Mejores puntajes (por fase de campaña y modo personalizado) | `pulsit.bestScores` | JSON (mapa clave → entero) | `{}` |
 | Modo daltónico activado | `pulsit.colorblindMode` | `"true"` / `"false"` | `false` |
+| Sonido y vibración activados (global, pantalla de Ajustes) | `pulsit.soundEnabled` | `"true"` / `"false"` | `true` |
 
 ## 6.2 Reglas de negocio
 

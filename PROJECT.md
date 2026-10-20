@@ -10,8 +10,8 @@
 - Lógica completa del modo campaña (10 fases, progresión 2→10, reposicionamiento según fase),
   implementada en `www/js/gameLogic.js` y orquestada por `www/js/game.js`.
 - Modo personalizado completo: configuración de botones (3-9), tipo de estímulo (colores/números/
-  ambos), reposicionamiento, sonido on/off y longitud máxima de secuencia, con validación y
-  persistencia.
+  ambos), reposicionamiento y longitud máxima de secuencia, con validación y persistencia (el
+  sonido ya no es parte de esta config — ver pantalla de Ajustes más abajo).
 - Audio 100% generado por Web Audio API: tono único por botón (independiente de su posición en
   pantalla), sonido de error, sonido de fase superada, y sonido de bienvenida en crescendo (~2s).
 - Persistencia local vía `@capacitor/preferences` (con fallback a `localStorage` en desarrollo
@@ -44,18 +44,30 @@
   también existe `background-circuit.svg` (generado por código, 100% vectorial) como alternativa
   sin dependencia de ninguna imagen externa.
 - **Feedback háptico** (`www/js/haptics.js`, `@capacitor/haptics`): vibración corta en cada toque
-  correcto, patrón distinto en error, y vibración de éxito al superar fase/partida. Se activa/
-  desactiva junto con el flag `sound`. Con fallback a `navigator.vibrate` fuera de la app nativa.
-- **Modo daltónico**: toggle global (persistido) en la pantalla de inicio que superpone una forma
-  fija (círculo, cuadrado, triángulo, etc.) sobre cada botón de tipo "colores", para no depender
-  solo del color (ver `gameLogic.shapeForValue`).
+  correcto, patrón distinto en error, y vibración de éxito al superar fase/partida. Con fallback a
+  `navigator.vibrate` fuera de la app nativa.
+- **Modo daltónico**: superpone una forma fija (círculo, cuadrado, triángulo, etc.) sobre cada botón
+  de tipo "colores", para no depender solo del color (ver `gameLogic.shapeForValue`).
 - **Mejor puntaje**: la pantalla de juego muestra `Secuencia: X / N · Mejor: B`, con el mejor
   guardado por fase de campaña y uno global para modo personalizado (`storage.getBestScore` /
   `setBestScore`, nunca retrocede).
+- **Pantalla de Ajustes** (`screen-settings`, nueva): consolida dos preferencias GLOBALES —
+  "Sonido y vibración activados" y "Modo daltónico" — accesible desde un botón en la pantalla de
+  inicio. El sonido dejó de ser parte de la config de modo personalizado (antes ni siquiera existía
+  forma de desactivarlo en campaña) y pasó a `storage.getSoundEnabled`/`setSoundEnabled`, cargado
+  una sola vez al iniciar la app y aplicado tanto a `AudioEngine` como a `HapticsEngine`.
 - **Rotación de pantalla verificada**: la app no fija orientación; al rotar, el CSS responsive
   reacomoda todo automáticamente. Se detectó y corrigió que, en horizontal con tableros de varias
   filas, el contenido podía no entrar en el alto disponible sin forma de scrollear — se agregó
   `overflow-y: auto` a `.screen`, verificado con un swipe real en el emulador rotado.
+- **Verificado en tablet**: emulador `Pulsit_Tablet` (perfil "10.1in WXGA", 800×1280 @ 160dpi,
+  creado a mano editando `config.ini` ya que no había `avdmanager` disponible en esta máquina — ver
+  `.project-corpus/state/STATUS.md`). El contenido queda centrado y bien proporcionado gracias al
+  `max-width` ya existente en `.screen`.
+- **`Pulsit-debug.apk`** en la raíz del repo (no versionado, ver `.gitignore`): copia de
+  conveniencia del último `app-debug.apk` generado, para instalar directamente en un teléfono
+  físico sin tener que navegar `android/app/build/outputs/...`. Se regenera con
+  `./gradlew assembleDebug` + copiar el archivo; no es parte del código fuente.
 
 ### En progreso / parcial
 
@@ -74,9 +86,11 @@
   nombre de archivo y dimensiones mínimas (512×512 px).
 - **Iconos nativos de la app** (`android/app/src/main/res/mipmap-*/ic_launcher*.png`): Capacitor
   generó los íconos por defecto del template; deberían regenerarse a partir del logo definitivo de
-  CauquenLabs una vez provisto (por ejemplo, con el Image Asset Studio de Android Studio).
-- **Verificación manual en tablet**: se probó en un emulador de teléfono; falta verificar
-  responsive en un tamaño de tablet real o emulado.
+  CauquenLabs una vez provisto (por ejemplo, con el Image Asset Studio de Android Studio). El
+  usuario pidió explícitamente dejar esto pendiente hasta tener el logo real.
+- **Pruebas en dispositivo físico**: todo lo verificado hasta ahora es en emuladores (teléfono y
+  tablet); falta instalar `Pulsit-debug.apk` en un teléfono real (especialmente para confirmar por
+  tacto el feedback háptico, que no se puede verificar desde el emulador/automatización).
 
 ## Decisiones técnicas tomadas
 
@@ -164,9 +178,21 @@
   navegador no puede resolver ese specifier. El paquete sigue siendo una dependencia npm real
   (necesaria para que `cap sync` registre el plugin nativo), solo que el JS de `www/` nunca lo
   importa directamente. Documentado en `AGENTS.md` para que futuros plugins sigan el mismo patrón.
-- **Vibración ligada al flag `sound`, sin control propio**: se evaluó agregar un toggle separado
-  para la vibración, pero se descartó para no sumar una opción más al modo personalizado sin un
-  pedido explícito; `sound` ya representa "feedback sensorial activado" en la práctica.
+- **Vibración ligada al mismo casillero que el sonido, sin control propio**: se evaluó agregar un
+  toggle separado para la vibración, pero se descartó para no sumar una opción más; el casillero
+  "Sonido y vibración activados" ya representa "feedback sensorial activado" en la práctica.
+- **Sonido migrado de "parámetro de modo personalizado" a "ajuste global" + pantalla de Ajustes
+  nueva**: a pedido del usuario ("junta sonido y modo daltónico en una pantalla de ajustes"). Se
+  sacó `sound` de `validateCustomConfig`/`DEFAULT_CUSTOM_CONFIG` y se agregó
+  `storage.getSoundEnabled`/`setSoundEnabled`, cargado una sola vez en `app.js:init()` (antes de
+  cablear cualquier pantalla, para que hasta el sonido de bienvenida lo respete) en vez de leerse
+  por partida. Efecto colateral deseado: el modo campaña, que nunca tuvo forma de silenciarse,
+  ahora sí respeta el ajuste.
+- **AVD de tablet creado a mano, sin `avdmanager`**: esta máquina solo tiene el SDK embebido de
+  Android Studio (sin `cmdline-tools`/`avdmanager` instalados). Se creó
+  `~/.android/avd/Pulsit_Tablet.avd/config.ini` directamente, clonando el del teléfono existente y
+  cambiando `hw.lcd.*`/`skin.*` al perfil clásico "10.1in WXGA" (800×1280 @ 160dpi) — el emulador
+  no necesita que el AVD haya sido creado por `avdmanager`, solo un `config.ini` válido.
 - **Modo daltónico aplica solo a botones tipo "colores"**: los de tipo "números"/"ambos" ya tienen
   un número como identificador independiente del color, así que agregarles también una forma sería
   ruido visual sin beneficio de accesibilidad real.
@@ -185,21 +211,22 @@
   `signingConfig` de release definido a propósito, ver "Decisiones técnicas"); falta el paso de
   firma documentado en `README.md` antes de poder subirlo a Play Console.
 - El logo de CauquenLabs es un placeholder geométrico generado programáticamente, no el logo real
-  de marca.
-- No hay pruebas automatizadas de UI/responsive más allá de lo verificado manualmente; se probó en
-  un emulador de teléfono (`Medium_Phone_API_37.0`) pero no en un tamaño de tablet (ver
-  `documentacion/07-criterios-de-aceptacion.md`).
+  de marca (pendiente a propósito, por pedido explícito del usuario).
+- No hay pruebas automatizadas de UI/responsive más allá de lo verificado manualmente (emuladores
+  de teléfono y tablet, ver `documentacion/07-criterios-de-aceptacion.md`); falta un dispositivo
+  físico real.
 - El feedback háptico se verificó por ausencia de errores (logcat limpio, sin excepciones JS) y por
   los tests unitarios de `HapticsEngine`, pero no se puede confirmar por tacto real desde este
-  entorno de desarrollo automatizado; falta una confirmación sensorial humana.
+  entorno de desarrollo automatizado; falta una confirmación sensorial humana en un teléfono físico.
 
 ## Próximos pasos concretos
 
-1. Verificar responsive en un emulador/tablet de pantalla grande (ej. `Pixel Tablet` o similar),
-   además del teléfono ya verificado.
-2. Reemplazar `www/assets/logo-cauquenlabs.png` por el logo definitivo de CauquenLabs (mínimo
-   512×512 px) cuando el cliente lo provea, y regenerar los íconos nativos de `android/app/src/
-   main/res/mipmap-*/` a partir de él.
+1. Instalar `Pulsit-debug.apk` (raíz del repo) en un teléfono físico vía USB/`adb install` o
+   transfiriendo el archivo, y confirmar: feedback háptico real, audio, persistencia, y que todo
+   el rediseño visual se vea bien fuera del emulador.
+2. Cuando CauquenLabs provea el logo definitivo: reemplazar `www/assets/logo-cauquenlabs.png`,
+   correr `npx cap sync`, regenerar los íconos nativos de `android/app/src/main/res/mipmap-*/`, y
+   recién ahí abordar el ícono de la app (explícitamente pospuesto hasta tener el logo real).
 3. Generar el keystore de firma siguiendo `README.md` y configurar Play App Signing.
 4. Generar el `.aab` de release firmado (con keystore real) y subirlo a Play Console como build
    interno de prueba.

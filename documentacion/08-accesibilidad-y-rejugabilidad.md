@@ -2,6 +2,13 @@
 
 Mejoras agregadas tras el lanzamiento inicial, a pedido del usuario.
 
+Tanto el sonido como el modo daltónico y la háptica son preferencias **globales** del jugador,
+configurables desde la pantalla de Ajustes (ver
+[04-pantallas-y-flujo.md](04-pantallas-y-flujo.md)) y persistidas en el dispositivo — no son parte
+de la configuración de una partida de modo personalizado, y aplican igual en campaña. (El sonido
+originalmente era un parámetro por partida; se migró a un ajuste global porque, entre otras cosas,
+el modo campaña no tenía forma de desactivarlo.)
+
 ## 8.1 Feedback háptico
 
 Cada vez que el jugador toca un botón, el dispositivo vibra brevemente, reforzando el acierto o el
@@ -12,8 +19,9 @@ error sin depender solo de la vista/oído:
 - **Fase/partida superada**: vibración de "éxito".
 
 Reglas:
-- Se activa/desactiva junto con el sonido (el flag `sound` de la configuración controla ambos; no
-  hay un control separado para la vibración).
+- Se activa/desactiva junto con el sonido, desde el casillero **"Sonido y vibración activados"**
+  de la pantalla de Ajustes (ver [04-pantallas-y-flujo.md](04-pantallas-y-flujo.md)); no hay un
+  control separado para la vibración.
 - En un dispositivo o navegador sin soporte de vibración, simplemente no pasa nada (no genera
   errores).
 
@@ -21,8 +29,8 @@ Fuente de verdad en código: `www/js/haptics.js` (`HapticsEngine`).
 
 ## 8.2 Modo daltónico
 
-Un toggle en la pantalla de inicio ("Modo daltónico (formas además de color)") hace que, además del
-color, cada botón de tipo "colores" muestre una **forma fija** (círculo, cuadrado, triángulo,
+Un casillero en la pantalla de Ajustes ("Modo daltónico (formas además de color)") hace que,
+además del color, cada botón de tipo "colores" muestre una **forma fija** (círculo, cuadrado, triángulo,
 rombo, estrella, cruz, triángulo invertido, hexágono, estrella de cuatro puntas — una por cada
 valor posible, 0 a 8), para poder jugar sin depender de distinguir los colores de la paleta.
 
@@ -62,3 +70,11 @@ Con configuraciones de muchos botones (varias filas) en horizontal, el contenido
 completo en el alto disponible; para eso, la pantalla de juego permite hacer **scroll vertical**
 (verificado manualmente: con 5 botones en horizontal, hay que deslizar hacia arriba para ver la
 barra "Reiniciar nivel", que de otro modo quedaría fuera de la vista).
+
+## 8.5 Verificación en tablet
+
+Además del emulador de teléfono, se verificó manualmente en un emulador de tablet (perfil "10.1in
+WXGA", 800×1280 @ 160dpi): el contenido queda centrado dentro del ancho máximo de cada pantalla
+(`max-width` en `.screen`, ver `www/css/styles.css`) en vez de estirarse de punta a punta, por lo
+que el tablero, los botones y los textos mantienen proporciones razonables y no se ven ni
+gigantes ni perdidos en una pantalla mucho más ancha que un teléfono.

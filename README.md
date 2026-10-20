@@ -50,6 +50,29 @@ Ver [`test/README.md`](test/README.md) para el detalle de cobertura.
 3. Dentro de Android Studio, esperar la sincronización de Gradle y presionar **Run ▶** sobre un
    emulador o dispositivo conectado.
 
+### Probar en un teléfono físico (sin Android Studio)
+
+Si solo querés instalar un build de prueba en un teléfono real:
+
+1. Generar el `.apk` de debug desde la terminal:
+   ```bash
+   npx cap sync
+   cd android && ./gradlew assembleDebug
+   ```
+   El archivo queda en `android/app/build/outputs/apk/debug/app-debug.apk` (una copia de
+   conveniencia puede vivir como `Pulsit-debug.apk` en la raíz del repo — no se versiona, ver
+   `.gitignore`).
+2. En el teléfono: `Ajustes` → activar "Orígenes desconocidos" / "Instalar apps desconocidas" para
+   la app que vaya a usarse para transferir el archivo (navegador, Drive, cable, etc.).
+3. Instalar el `.apk`:
+   - Por cable con el teléfono en modo depuración USB: `adb install -r app-debug.apk` (con el
+     teléfono conectado y detectado por `adb devices`), o
+   - Transfiriendo el archivo al teléfono (USB, Drive, etc.) y abriéndolo desde un explorador de
+     archivos para instalarlo manualmente.
+
+Este `.apk` de debug sirve para probar la app, pero **no** es el artefacto para publicar en Play
+Store (ver la sección siguiente, que requiere un `.aab` firmado con una clave de producción).
+
 Repite el paso 1 cada vez que modifiques algo en `www/` — Android Studio no ve esos cambios hasta
 que se sincroniza.
 
