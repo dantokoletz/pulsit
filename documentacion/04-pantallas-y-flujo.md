@@ -57,13 +57,28 @@ los valores por defecto si es la primera vez).
 ## 4.3 Pantalla de juego (`screen-game`)
 
 Contenido:
-- Barra de estado: fase actual (o "Modo personalizado") y progreso de la secuencia actual
-  (`Secuencia: X / N`).
+- **Número de fase luminoso**: solo en modo campaña, muestra el número de fase actual (1-10) con
+  un estilo de neón/glow. No se muestra en modo personalizado (no hay un "número de fase").
+- Barra de estado: fase actual (o "Modo personalizado").
+- **Barra de progreso**: indica visualmente cuánto falta de la secuencia actual para superar la
+  fase/partida (`sequenceLength / maxSequenceLength`), además del texto `Secuencia: X / N`.
 - Botón **"Menú"**: abandona la partida en curso y vuelve a la pantalla de inicio.
 - Mensaje de estado: "Observa la secuencia...", "Tu turno", resultado de fase superada, o mensaje
   de derrota con la longitud de secuencia alcanzada.
-- Tablero de botones (grilla), con la cantidad y tipo de botones que indique la fase/configuración
-  activa.
+- Tablero de botones (circulares, agrupados en filas fijas según la cantidad — ver
+  [01-concepto-y-mecanica.md](01-concepto-y-mecanica.md)), con la cantidad y tipo de botones que
+  indique la fase/configuración activa.
+- **Barra "Reiniciar nivel"**: reinicia la partida actual desde una secuencia de longitud 2, con la
+  misma configuración (fase o modo personalizado), sin volver al menú. Útil para intentar de nuevo
+  sin perder tiempo navegando pantallas.
 
 Esta misma pantalla sirve tanto para el modo campaña como para el modo personalizado; lo único que
-cambia es la configuración del tablero y el texto de la barra de estado.
+cambia es la configuración del tablero, el texto de la barra de estado y si se muestra o no el
+número de fase luminoso.
+
+## 4.4 Fondo visual
+
+Las tres pantallas comparten un fondo fijo de ambientación ("futurista", estilo circuito: líneas y
+nodos azules/violeta sobre un degradé oscuro, con un pulso suave de resplandor). La imagen del
+fondo vive en un **archivo de recurso reemplazable**, `www/assets/background-circuit.svg`, no está
+embebida en el código: para cambiarla alcanza con reemplazar ese archivo (ver `AGENTS.md`).

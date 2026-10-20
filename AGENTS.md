@@ -46,7 +46,8 @@ pulsit/
 │   │   ├── storage.js         # persistencia (Preferences / localStorage)
 │   │   └── custom.js          # formulario de modo personalizado
 │   └── assets/
-│       └── logo-cauquenlabs.png   # PLACEHOLDER — reemplazar por el logo real de CauquenLabs
+│       ├── logo-cauquenlabs.png   # PLACEHOLDER — reemplazar por el logo real de CauquenLabs
+│       └── background-circuit.svg # fondo de las 3 pantallas — reemplazable (ver abajo)
 ├── android/                   # proyecto Android generado por Capacitor
 │   └── ...                    # NO MODIFICAR A MANO salvo config nativa justificada (ver §5)
 ├── documentacion/             # documentación FUNCIONAL (qué hace la app, para humanos y agentes)
@@ -57,6 +58,12 @@ pulsit/
     │   └── STATUS.md
     └── reports/
 ```
+
+**Assets reemplazables**: `www/assets/logo-cauquenlabs.png` (logo, placeholder) y
+`www/assets/background-circuit.svg` (fondo de las 3 pantallas, estilo circuito) están pensados para
+sobrescribirse sin tocar código: el CSS/HTML los referencia por nombre de archivo
+(`www/css/styles.css` → `.cosmic-bg`), así que basta con reemplazar el archivo (manteniendo el
+nombre, o actualizando la referencia si cambia) y correr `npx cap sync`.
 
 ## 4. Convenciones de código
 

@@ -15,10 +15,12 @@ fija del modo campaña.
 
 ### Tipo de estímulo "ambos"
 
-Cuando el jugador elige "ambos", la mitad de los botones son colores y la mitad números (se
-alternan: botón lógico 0 = color, 1 = número, 2 = color, ...). Cada botón conserva su tipo fijo
-durante toda la partida; lo que puede cambiar (si está activado el reposicionamiento) es su
-posición en pantalla, no su tipo.
+Cuando el jugador elige "ambos", **cada botón combina los dos estímulos a la vez**: tiene un color
+de fondo y además muestra su número, en vez de alternar botones puramente de color con botones
+puramente numéricos. Esto aumenta la dificultad (el jugador puede apoyarse en cualquiera de los
+dos estímulos para memorizar) sin dejar ningún botón "a medias". Cada botón conserva su color y
+número fijos durante toda la partida; lo que puede cambiar (si está activado el reposicionamiento)
+es su posición en pantalla.
 
 ## Validación
 

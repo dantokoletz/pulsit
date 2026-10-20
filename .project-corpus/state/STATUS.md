@@ -1,10 +1,11 @@
 # STATUS — estado verificado de Pulsit
 
-Última actualización: 2026-10-20 (sesión 2: verificación de build Android)
+Última actualización: 2026-10-20 (sesión 2: verificación de build Android + rediseño visual)
 
 ## Estado verificado (confirmado en este entorno de desarrollo)
 
-- `npm install` y `npm test` → 58/58 tests pasando.
+- `npm install` y `npm test` → 66/66 tests pasando (58 al inicio de la sesión + 8 nuevos del
+  rediseño del tablero).
 - `npx cap sync` corre sin errores.
 - **Build Android verificado de punta a punta** (nuevo en esta sesión, con Android Studio ya
   instalado en la máquina):
@@ -20,6 +21,22 @@
 - Se rediseñaron los tonos de audio (`www/js/audio.js`) para que los botones suenen más
   distinguibles entre sí (terceras mayores en vez de escala pentatónica), a pedido del usuario tras
   probar el juego en el navegador.
+- **Modo personalizado verificado en nativo**: se confirmó, leyendo directamente
+  `/data/data/com.cauquenlabs.pulsit/shared_prefs/CapacitorStorage.xml` vía
+  `adb shell run-as com.cauquenlabs.pulsit cat ...`, que la configuración personalizada persiste
+  correctamente tras un `am force-stop` + relanzamiento completo de la app (no solo en el
+  navegador). Es la forma más confiable de verificar persistencia nativa sin pelear con el timing
+  de los taps simulados por `adb shell input tap` (el primer tap tras cada relanzamiento de la app
+  suele perderse; conviene asumir eso y tolerar un reintento, o verificar vía el archivo de
+  SharedPreferences directamente).
+- **Rediseño visual del tablero y la pantalla de juego** (a pedido del usuario, verificado en
+  navegador Y en el emulador Android con un rebuild completo):
+  - Botones circulares agrupados en filas fijas por cantidad (`gameLogic.getRowLayout`).
+  - Estímulo "ambos" combina color + número en cada botón (antes alternaba botones puros).
+  - Número de fase luminoso, barra de progreso de la secuencia, y barra "Reiniciar nivel".
+  - Fondo "futurista" estilo circuito como recurso SVG reemplazable
+    (`www/assets/background-circuit.svg`), con los botones garantizados por encima (`z-index`
+    explícito en `.screen`).
 
 ## Bloqueadores
 
@@ -56,10 +73,13 @@ Emulador disponible: `Medium_Phone_API_37.0` (API 37). Listarlo con
 
 ## Última acción completada
 
-Se verificó por primera vez el build Android real (debug APK + release AAB sin firmar), se corrió
-la app en un emulador confirmando que funciona correctamente de punta a punta, y se mejoró el
-diseño sonoro de los botones a pedido del usuario. Se actualizó `PROJECT.md` con las decisiones
-técnicas del ajuste de versión de Gradle.
+Se verificó por primera vez el build Android real (debug APK + release AAB sin firmar) y se corrió
+la app en un emulador. Luego, a pedido del usuario: se mejoró el diseño sonoro, se verificó la
+persistencia del modo personalizado a nivel de archivo nativo, y se aplicó un rediseño visual
+completo (tablero en filas fijas con botones redondos, estímulo "ambos" combinado, número de fase
+luminoso, barra de progreso, barra de reinicio de nivel, y fondo tipo circuito reemplazable) — todo
+verificado tanto en navegador como en un rebuild + reinstalación completa en el emulador Android.
+Se actualizó `PROJECT.md` y la documentación funcional con las decisiones tomadas.
 
 ## Siguiente acción exacta
 

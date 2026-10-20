@@ -30,11 +30,22 @@
 - Tonos de botón rediseñados con mayor separación perceptible (terceras mayores en vez de grados
   de escala pentatónica), tras detectar en pruebas manuales que sonaban demasiado parecidos entre
   sí (ver `www/js/audio.js`).
+- **Rediseño del tablero** (a pedido del usuario, verificado en navegador y en el emulador Android):
+  botones circulares, agrupados siempre en filas fijas según la cantidad (`gameLogic.getRowLayout`:
+  2-1, 2-2, 3-2, 3-3, 3-3-1, 3-3-2, 3-3-3 para 3 a 9 botones) en vez de una grilla que se ajusta
+  libremente al ancho. El estímulo "ambos" ahora combina color de fondo + número en cada botón
+  (antes alternaba botones puramente de color con puramente numéricos).
+- **Pantalla de juego ampliada**: número de fase luminoso (solo campaña), barra de progreso visual
+  de la secuencia actual, y una barra "Reiniciar nivel" para reintentar sin volver al menú.
+- **Fondo visual "futurista" estilo circuito** (`www/assets/background-circuit.svg`, recurso
+  reemplazable) en las 3 pantallas, con un pulso de resplandor en CSS por encima; todo el contenido
+  de cada pantalla tiene `z-index` explícito para garantizar que quede por encima del fondo.
 
 ### En progreso / parcial
 
 - Nada en progreso al momento de este commit; el proyecto está en un estado estable y completo
-  funcionalmente según la especificación (`pulsit.md`), y con el build nativo ya verificado.
+  funcionalmente según la especificación (`pulsit.md`), con el build nativo verificado y el
+  rediseño visual aplicado también al APK nativo (no solo al navegador).
 
 ### Falta (ver también `.project-corpus/state/STATUS.md`)
 
@@ -106,6 +117,26 @@
   semitonos, lo que las hacía sonar parecidas entre sí en reproducciones cortas (350ms). Se
   rediseñó `frequencyForValue` para espaciar las notas en terceras mayores a lo largo de 3 octavas
   (A3 a ~D6), maximizando la distinción perceptible entre cualquier par de botones.
+- **Filas fijas por cantidad de botones (`getRowLayout`) en vez de grid auto-ajustable**: a pedido
+  explícito del usuario, con una figura exacta por cantidad (ver `documentacion/
+  01-concepto-y-mecanica.md`). Se implementó como función pura en `gameLogic.js` (regla: filas de 2
+  si `count<=4`, filas de 3 en caso contrario, con la última fila completando el resto) para que
+  `game.js` solo tenga que agrupar el DOM en filas, sin decidir la regla de negocio.
+- **Estímulo "ambos" combina color+número por botón, no alterna botones puros**: cambio de diseño a
+  pedido del usuario. Simplificó `generateButtonValues` (ya no necesita alternar `type` por índice)
+  a costa de que `game.js` deba aplicar tanto `backgroundColor` como `textContent` cuando
+  corresponde; se agregó `text-shadow` a `.game-button--number` para mantener legibilidad del
+  número sobre fondos de color claro (amarillo, rosa) de la paleta.
+- **Fondo como archivo SVG reemplazable, no CSS embebido**: el usuario pidió explícitamente poder
+  reemplazar el fondo como un recurso (igual que el logo), así que se generó
+  `www/assets/background-circuit.svg` en vez de mantener el enfoque anterior (gradientes 100% CSS).
+  El pulso de resplandor se mantuvo como capa CSS aparte (`::before`/`::after`), de modo que sigue
+  funcionando aunque se reemplace el SVG por otra imagen. Se usó SVG (vectorial) y no PNG/JPG para
+  que se vea nítido en cualquier densidad de pantalla Android sin generar variantes mdpi/hdpi/xhdpi.
+- **`z-index` explícito en `.screen`**: aunque el apilamiento ya funcionaba correctamente por
+  herencia de `#app` (`z-index: 1`) sobre `.cosmic-bg` (`z-index: 0`), se agregó `position: relative;
+  z-index: 1` directamente en `.screen` para que la garantía de "los botones quedan por encima del
+  fondo" sea explícita y no dependa implícitamente de la estructura del DOM.
 
 ## Problemas conocidos / limitaciones
 

@@ -31,6 +31,24 @@ Lo único que puede cambiar es su **posición en la grilla** cuando la fase indi
 Esto es intencional: el jugador memoriza "la secuencia es rojo, verde, azul", no "arriba-izquierda,
 centro, abajo-derecha".
 
+## Disposición del tablero
+
+Los botones son circulares y se agrupan siempre en filas fijas según la cantidad total (no en una
+grilla que se ajusta libremente al ancho de pantalla), para que la "figura" del tablero sea
+consistente en cualquier dispositivo:
+
+| Botones | Filas |
+|---|---|
+| 3 | 2 arriba, 1 abajo centrado |
+| 4 | 2 arriba, 2 abajo |
+| 5 | 3 arriba, 2 abajo centrados |
+| 6 | 3 arriba, 3 abajo |
+| 7 | 3 arriba, 3 en el medio, 1 abajo centrado |
+| 8 | 3 arriba, 3 en el medio, 2 abajo centrados |
+| 9 | 3 arriba, 3 en el medio, 3 abajo |
+
+Fuente de verdad en código: `www/js/gameLogic.js`, función `getRowLayout`.
+
 ## Condición de victoria y derrota de una ronda
 
 - Una **ronda** es un intento de repetir una secuencia de longitud `N`.
