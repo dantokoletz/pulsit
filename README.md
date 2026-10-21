@@ -78,44 +78,64 @@ que se sincroniza.
 
 ## Publicar en Google Play Store
 
-### 1. Generar el keystore de firma
+### 1. Keystore de firma — YA GENERADO
 
-Si todavía no tenés un keystore para esta app, generá uno (guardalo en un lugar seguro, **fuera
-del repositorio** — ver `.gitignore`):
+Ya existe un keystore de release para esta app, generado el 2026-10-21:
+
+- Archivo: `pulsit-release.keystore`, guardado **fuera del repositorio** (en una carpeta hermana
+  del proyecto, no dentro de `Pulsit/`), para que nunca corra riesgo de subirse a git por error.
+- Alias: `pulsit`.
+- Validez: 10.000 días (vence en 2054).
+- Las contraseñas (storePassword y keyPassword, iguales entre sí) las eligió el usuario — **no
+  están en ningún archivo versionado**, solo en `android/keystore.properties` (ignorado por git,
+  ver `.gitignore`) y en la memoria del usuario.
+
+**Backup crítico**: si se pierde el archivo del keystore o la contraseña, nunca más se va a poder
+subir una actualización de la app con el mismo `applicationId` (salvo que ya se haya habilitado
+Play App Signing — ver sección 3 — en cuyo caso Google conserva la clave final, pero la "upload
+key" local se seguiría necesitando para firmar cada subida). **El usuario debe guardar una copia
+del archivo `.keystore` y de la contraseña en un lugar seguro y duradero** (gestor de contraseñas,
+backup cifrado, etc.) fuera de esta máquina — no depender de que siga ahí.
+
+Si en el futuro hace falta regenerar el keystore desde cero (por ejemplo, en otra máquina, sin el
+archivo original):
 
 ```bash
 keytool -genkey -v -keystore pulsit-release.keystore -alias pulsit -keyalg RSA -keysize 2048 -validity 10000
 ```
 
-Vas a necesitar recordar: la contraseña del keystore, el alias (`pulsit` en el ejemplo) y la
-contraseña de la clave. **Si se pierde este archivo o las contraseñas, no vas a poder volver a
-actualizar la app con el mismo `applicationId`** salvo que uses Play App Signing (ver abajo).
+Esto **invalida la posibilidad de actualizar la app ya publicada** con el keystore anterior, salvo
+que se use Play App Signing (ver sección 3).
 
-### 2. Configurar la firma en Android Studio
+### 2. Configurar la firma — YA CONFIGURADO vía Gradle
 
-Opción recomendada, vía la UI de Android Studio:
-
-- `Build` → `Generate Signed Bundle / APK...`
-- Elegir **Android App Bundle**.
-- Seleccionar el keystore generado en el paso 1, o crear uno nuevo desde el mismo asistente.
-- Elegir el build variant `release`.
-
-Esto genera un `.aab` firmado en `android/app/release/` (o la ruta que indique Android Studio al
-finalizar).
-
-Alternativa (configuración manual vía Gradle): crear `android/keystore.properties` (ignorado por
-git) con:
+`android/app/build.gradle` ya tiene el bloque `signingConfigs.release`, que lee
+`android/keystore.properties` (no versionado):
 
 ```properties
-storeFile=../pulsit-release.keystore
-storePassword=TU_PASSWORD
+storeFile=<ruta absoluta al .keystore, fuera del repo>
+storePassword=<la contraseña elegida>
 keyAlias=pulsit
-keyPassword=TU_PASSWORD
+keyPassword=<la misma contraseña>
 ```
 
-y referenciarlo desde `android/app/build.gradle` en el bloque `signingConfigs` /
-`buildTypes.release`. Esta app no trae esa configuración por defecto para no forzar un esquema de
-firma específico; documentarla acá y en `PROJECT.md` si se adopta.
+Si ese archivo no existe (por ejemplo, al clonar el repo en otra máquina sin el keystore), el
+build simplemente genera un `.aab`/`.apk` de release **sin firmar**, sin romper el build — hay que
+recrear `keystore.properties` ahí (con el keystore real, ver sección 1) para volver a tener
+firma automática.
+
+Para generar el bundle firmado:
+
+```bash
+cd android && ./gradlew bundleRelease
+```
+
+El resultado queda en `android/app/build/outputs/bundle/release/app-release.aab` (y se copia a
+`Pulsit-release.aab` en la raíz del repo, no versionado, por conveniencia — mismo patrón que
+`Pulsit-debug.apk`).
+
+Alternativa (vía la UI de Android Studio, sin tocar Gradle): `Build` → `Generate Signed Bundle /
+APK...` → **Android App Bundle** → seleccionar el keystore → build variant `release`.
 
 ### 3. Play App Signing (recomendado por Google)
 

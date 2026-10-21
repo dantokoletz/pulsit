@@ -1,15 +1,25 @@
 # STATUS — estado verificado de Pulsit
 
-Última actualización: 2026-10-21 (sesión 3: fix de verdad del bug de rotación horizontal, pantalla
-"Acerca de" nueva, ícono nativo de la app rediseñado — ver "Última acción completada")
+Última actualización: 2026-10-21 (sesión 3, continuada: fix de verdad del bug de rotación
+horizontal + "Acerca de" + ícono nuevo — commiteado — y luego keystore de release + bundle
+firmado — ver "Última acción completada")
 
 ## ✅ Continuidad: qué pasa si se reinicia el equipo
 
-`git log --oneline -1` debería mostrar `2b2be6a Agrega halo en el botón activo y velocidad de
-secuencia configurable` (o uno posterior) **si ya se commiteó el trabajo de la sesión actual** —
-ver "Siguiente acción exacta" antes de asumir que está commiteado: al momento de escribir esto
-todavía NO lo está (ver abajo). Un `git status --short` muestra el detalle de qué falta guardar.
-Nada de lo importante depende de un proceso en memoria:
+`git log --oneline -1` debería mostrar `562644a Corrige el bug de rotación horizontal, agrega
+"Acerca de" y rediseña el ícono` (o uno posterior) **si ya se commiteó el trabajo de firma de esta
+sesión** — ver "Siguiente acción exacta" antes de asumir que ESO está commiteado: la config de
+Gradle para firmar (`android/app/build.gradle`) todavía no lo está al momento de escribir esto. Un
+`git status --short` muestra el detalle de qué falta guardar. Nada de lo importante depende de un
+proceso en memoria:
+
+- **El keystore de firma de producción YA EXISTE**: `pulsit-release.keystore` (alias `pulsit`),
+  guardado en `D:\Users\danto\Documents\Projects\Pulsit-keystore\` — **fuera del repo por
+  completo**, no solo gitignorado. La contraseña (storePassword = keyPassword) la eligió el
+  usuario en el chat; queda en `android/keystore.properties` (gitignorado) y en la memoria del
+  usuario, nunca en un archivo versionado. **Sin esta carpeta y esta contraseña, no se puede volver
+  a generar un `.aab` firmado compatible con el mismo keystore** — recomendarle al usuario que haga
+  un backup externo (gestor de contraseñas, backup cifrado) si todavía no lo hizo.
 
 - Los emuladores Android (`Medium_Phone_API_37.0` y `Pulsit_Tablet`) están **apagados**; no hace
   falta nada especial para reiniciar el equipo, simplemente no van a estar corriendo al volver.
@@ -25,8 +35,12 @@ Nada de lo importante depende de un proceso en memoria:
     que yo haya creado (ver próximo paso si se quiere limpiar).
   - `Pulsit-debug.apk`: copia de conveniencia del build de debug más reciente, para instalar en un
     teléfono físico. Está en `.gitignore` (`*.apk`/`*.aab`) porque es un artefacto regenerable, no
-    código fuente — se recrea con `./gradlew assembleDebug` (ver `README.md`). **Ya está
-    actualizado** con el ícono nuevo, "Acerca de" y el fix de rotación de esta sesión.
+    código fuente — se recrea con `./gradlew assembleDebug` (ver `README.md`). Actualizado con el
+    ícono nuevo, "Acerca de" y el fix de rotación.
+  - `Pulsit-release.aab`: **bundle de release firmado**, recién generado (`./gradlew
+    bundleRelease`), verificado con `jarsigner -verify` → "jar verified". Listo para subir a Play
+    Console. También en `.gitignore`, se recrea con el keystore + `keystore.properties` (ver
+    "Detalle técnico").
 
 **Para retomar el trabajo en una sesión nueva**: leer este archivo, `PROJECT.md` y `AGENTS.md`, y
 seguir la sección "Siguiente acción exacta" más abajo.
@@ -66,13 +80,9 @@ seguir la sección "Siguiente acción exacta" más abajo.
 
 ## Bloqueadores
 
-- **`.aab` sin firma de producción**: `bundleRelease` no tiene un `signingConfig` de release
-  configurado (a propósito, ver `PROJECT.md`). Falta que quien publique la app genere su propio
-  keystore y firme el bundle, siguiendo `README.md`. El usuario indicó que lo haría él mismo.
 - No se cuenta con el logo definitivo de CauquenLabs (se usó un placeholder geométrico), usado en
-  la pantalla de inicio y en "Acerca de". **Esto ya NO bloquea el ícono nativo de la app** — desde
-  esta sesión el ícono es un diseño propio de Pulsit, independiente del logo de CauquenLabs (ver
-  "Última acción completada").
+  la pantalla de inicio y en "Acerca de". **Esto NO bloquea el ícono nativo de la app** — es un
+  diseño propio de Pulsit, independiente del logo de CauquenLabs.
 - El feedback háptico no se confirmó por tacto real (solo por ausencia de errores en logcat/tests);
   falta verificación sensorial en un dispositivo físico.
 - Todo lo verificado hasta ahora es en emuladores y en el navegador de escritorio; falta un
@@ -107,6 +117,21 @@ automáticamente si falta, o se recrea con una línea `sdk.dir=<ruta al SDK>`.
   existiera (por ejemplo, en otra máquina), se puede recrear así o crear cualquier otro perfil de
   tablet desde el AVD Manager de Android Studio.
 
+**Keystore de release y firma automática**: `android/app/build.gradle` lee
+`android/keystore.properties` (gitignorado) al evaluar el proyecto; si el archivo existe, arma
+`signingConfigs.release` y lo aplica a `buildTypes.release` (variable `hasSigningConfig`). Si no
+existe (clon nuevo del repo, otra máquina), el build no falla — simplemente no firma. El keystore
+real vive en `D:\Users\danto\Documents\Projects\Pulsit-keystore\pulsit-release.keystore` (alias
+`pulsit`, fuera del repo). Para regenerar `keystore.properties` en una máquina nueva que SÍ tenga
+una copia del `.keystore` y la contraseña:
+
+```properties
+storeFile=<ruta absoluta al .keystore>
+storePassword=<la contraseña>
+keyAlias=pulsit
+keyPassword=<la misma contraseña>
+```
+
 **Taps simulados por `adb shell input tap`**: el primer tap justo después de relanzar la app suele
 perderse (parece un tema de foco/ventana, no un bug de la app). Conviene asumirlo y re-intentar el
 tap, o verificar estado vía `adb shell run-as ... cat .../shared_prefs/...` en vez de depender de
@@ -117,57 +142,55 @@ size` antes de tapear, no asumir que la imagen mostrada está 1:1.
 
 ## Última acción completada
 
-**Sesión 2026-10-21 (continuación), a pedido del usuario** — tres cambios, todos verificados en
-emulador Android real además de navegador (código sin commitear todavía, ver "Siguiente acción
-exacta"):
+**Sesión 2026-10-21, dos bloques de trabajo:**
 
-1. **Fix de verdad del bug de rotación horizontal**: el usuario reportó que, en horizontal, "la
-   pantalla queda fuera del celular, puedo moverla" — el fix de la sesión anterior
-   (`overflow-y: auto` en `.screen`) resultó insuficiente. Causa raíz: `#app` usaba `min-height`
-   (sin tope) y `.screen` no podía encogerse (`min-height: auto` por defecto en flex), así que el
-   scroll interno nunca se activaba y era la PÁGINA ENTERA la que crecía más allá de la ventana y
-   quedaba pannable. Fix real: `#app` pasa a `height: 100dvh` + `.screen` suma `min-height: 0`
-   (`www/css/styles.css`), más `overflow: hidden` en `html`/`body` como respaldo. También se agregó
-   una media query de `orientation: landscape` para achicar elementos decorativos en poca altura.
-   **Verificado en emulador real** con un tablero de 9 botones en horizontal: el contenido extra
-   ahora scrollea correctamente adentro de la pantalla en vez de desplazar toda la página.
-2. **Pantalla "Acerca de" nueva** (`screen-about`): descripción del juego, Empresa (CauquenLabs),
-   Desarrollador (Daniel Antokoletz), y el logo de CauquenLabs (mismo placeholder que la pantalla
-   de inicio) con nota de que está en diseño. Accesible desde un botón nuevo en el menú de inicio.
-3. **Ícono nativo de la app rediseñado**: el ícono anterior era literalmente la plantilla default
-   de Capacitor/Android Studio (nunca se había personalizado, sin relación con CauquenLabs). Se
-   reemplazó por un diseño propio generado por código (SVG + `sharp`): un anillo de 4 colores — los
-   mismos de `COLOR_PALETTE` en `game.js` — alrededor de un punto brillante, sobre fondo oscuro con
-   resplandor. Adaptive icon completo (foreground + background + legacy + round, 5 densidades),
-   fuente versionada en `www/assets/icon-pulsit-source.svg`. **No depende del logo de CauquenLabs**
-   (que sigue pendiente, sin cambios ahí). Verificado en el launcher del emulador — se ve bien
-   incluso en el tamaño más chico (48dp).
+**Bloque 1 (ya commiteado, `562644a`)** — fix de verdad del bug de rotación horizontal, pantalla
+"Acerca de" nueva, ícono nativo de la app rediseñado. Ver el mensaje del commit para el detalle;
+resumen: `#app` pasó de `min-height` a `height: 100dvh` y `.screen` sumó `min-height: 0` (el fix
+anterior, solo `overflow-y: auto`, no alcanzaba porque un flex item no se encoge por defecto); se
+agregó `screen-about` con Empresa/Desarrollador/descripción/logo de CauquenLabs; se reemplazó el
+ícono default de plantilla de Capacitor por un diseño propio (anillo de 4 colores de
+`COLOR_PALETTE` alrededor de un punto brillante), generado por SVG + `sharp` como adaptive icon
+completo. Todo verificado en emulador Android real.
 
-Verificado: 97/97 tests pasando (sin cambios de este bloque, ya estaban en 97 desde la sesión
-anterior), `npx cap sync` + `./gradlew assembleDebug` sin errores, instalado y probado en el
-emulador `Medium_Phone_API_37.0` (ícono en el launcher, pantalla "Acerca de", y el tablero de 9
-botones en horizontal con scroll funcionando). `Pulsit-debug.apk` en la raíz del repo ya está
-actualizado con estos tres cambios.
+**Bloque 2 (sin commitear todavía)** — a pedido explícito del usuario ("¿Tu puedes crear el bundle
+firmado?" → "Por favor"): se generó el keystore de release y se firmó el primer `.aab`:
+
+1. Se intentó generar las contraseñas del keystore automáticamente (`openssl rand`), pero el
+   entorno lo bloqueó (clasificador de "Credential Materialization" en el permiso de Bash) — correcto:
+   un secreto de firma de producción no debe materializarlo el agente por su cuenta. Se le preguntó
+   al usuario y eligió la contraseña él mismo en el chat (misma contraseña para store y key).
+2. Se generó `pulsit-release.keystore` (alias `pulsit`, RSA 2048, validez 10.000 días) con
+   `keytool`, guardado **fuera del repo** en `D:\Users\danto\Documents\Projects\Pulsit-keystore\`.
+3. Se creó `android/keystore.properties` (gitignorado) con la ruta y la contraseña, y se agregó
+   `signingConfigs.release` a `android/app/build.gradle`, aplicado condicionalmente a
+   `buildTypes.release` solo si ese archivo existe (no rompe el build en otra máquina sin el
+   keystore).
+4. `./gradlew bundleRelease` generó `app-release.aab` firmado; se verificó con `jarsigner -verify`
+   → "jar verified" (las advertencias de cert self-signed/sin CA/sin timestamp son normales y
+   esperadas para firma de apps Android, no un problema). Copiado a `Pulsit-release.aab` en la raíz
+   del repo (no versionado, mismo patrón que `Pulsit-debug.apk`).
+5. Se actualizó `README.md` (sección "Publicar en Google Play Store", ahora describe el estado
+   real en vez de instrucciones genéricas) y `PROJECT.md`.
+
+**Nada de esto se subió a Play Console todavía** — eso sigue siendo responsabilidad manual del
+usuario (crear la app, subir el `.aab`, aceptar Play App Signing).
 
 ## Siguiente acción exacta
 
-1. **Preguntar al usuario si commitear los cambios de esta sesión** (no se hizo todavía — no fue
-   pedido explícitamente, a diferencia de la sesión anterior). Archivos modificados/nuevos:
-   `AGENTS.md`, `README.md`, `documentacion/04-pantallas-y-flujo.md`,
-   `documentacion/08-accesibilidad-y-rejugabilidad.md`, `www/css/styles.css`, `www/index.html`,
-   `www/js/app.js`, `www/assets/icon-pulsit-source.svg` (nuevo), `www/assets/icon-pulsit-preview.png`
-   (nuevo), y en `android/app/src/main/res/`: los XML de `mipmap-anydpi-v26/`, los PNG de las 5
-   densidades `mipmap-*/` (incluye `ic_launcher_background.png` nuevo en cada una), y la
-   eliminación de `drawable/ic_launcher_background.xml`, `drawable-v24/ic_launcher_foreground.xml`
-   y `values/ic_launcher_background.xml` (quedaron sin uso).
-2. Instalar el `Pulsit-debug.apk` recién regenerado en el teléfono físico del usuario y confirmar
-   que el fix de rotación, "Acerca de" y el ícono nuevo se ven bien ahí también.
-3. Generar el keystore de firma de producción siguiendo `README.md` (sección "Publicar en Google
-   Play Store") — el usuario mencionó que lo haría él mismo.
-4. Re-ejecutar `./gradlew bundleRelease` con la firma configurada y verificar que el `.aab`
-   resultante esté correctamente firmado, subiéndolo a Play Console como build interno de prueba.
+1. **Preguntar al usuario si commitear el bloque 2** (keystore/firma): `android/app/build.gradle`
+   (agrega `signingConfigs`), `README.md`, `PROJECT.md`. **Nunca** agregar
+   `android/keystore.properties` ni `Pulsit-release.aab` — ya están gitignorados, pero confirmar
+   con `git status` antes de cualquier `git add` amplio que no se hayan colado.
+2. **Recordarle al usuario que respalde el keystore y la contraseña** fuera de esta máquina (gestor
+   de contraseñas, backup cifrado) — es la pieza más crítica e irrecuperable de todo este trabajo.
+3. Instalar `Pulsit-debug.apk` en el teléfono físico del usuario y confirmar que el fix de
+   rotación, "Acerca de" y el ícono nuevo se ven bien ahí también (no probado aún fuera de
+   emulador/navegador).
+4. Crear la app en Play Console, subir `Pulsit-release.aab` (ya firmado, en la raíz del repo) como
+   build interno de prueba, y aceptar Play App Signing.
 5. Cuando CauquenLabs provea el logo definitivo: reemplazar `www/assets/logo-cauquenlabs.png`
    (usado en inicio y "Acerca de"), correr `npx cap sync`, y quitar la nota "provisorio, en diseño"
-   de `www/index.html` (`#screen-about`). El ícono de la app NO necesita tocarse en este paso (ya
-   no depende del logo de CauquenLabs).
-6. Etiquetar `v0.2.0` una vez firmado y subido el primer build de prueba a Play Console.
+   de `www/index.html` (`#screen-about`). El ícono de la app NO necesita tocarse (ya no depende del
+   logo de CauquenLabs).
+6. Etiquetar `v0.2.0` una vez subido el primer build de prueba a Play Console.

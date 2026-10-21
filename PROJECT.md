@@ -96,6 +96,12 @@
   `setSequenceSpeedMs`, 350-1100ms, por defecto 700ms — más lento que el valor fijo original de
   550ms, a pedido del usuario). `GameController._playCurrentSequence` ahora calcula el tiempo de
   resalte a partir de `config.sequenceSpeedMs` en vez de usar una constante fija.
+- **Bundle de release firmado**: se generó el keystore de producción (`pulsit-release.keystore`,
+  alias `pulsit`, guardado fuera del repo) y se configuró `android/app/build.gradle` para firmar
+  automáticamente (`signingConfigs.release`, leyendo `android/keystore.properties`, no versionado).
+  `./gradlew bundleRelease` genera un `.aab` firmado y verificado (`jarsigner -verify` → "jar
+  verified"), copiado a `Pulsit-release.aab` en la raíz del repo (no versionado, mismo patrón que
+  `Pulsit-debug.apk`). Ver README.md, "Publicar en Google Play Store".
 
 ### En progreso / parcial
 
@@ -105,10 +111,9 @@
 
 ### Falta (ver también `.project-corpus/state/STATUS.md`)
 
-- **Generación del `.aab` firmado para Play Store**: `bundleRelease` genera un `.aab` sin firma de
-  producción (sin `signingConfig` de release configurado, a propósito — ver "Decisiones técnicas").
-  Falta que el publicador genere su propio keystore y firme el bundle final, según el procedimiento
-  de `README.md`.
+- **Subir el primer `.aab` a Play Console**: el `.aab` firmado ya se genera correctamente (ver
+  "Funciona" y README.md, "Publicar en Google Play Store"); falta crear la app en Play Console,
+  subir `Pulsit-release.aab` como build interno de prueba y aceptar Play App Signing.
 - **Logo definitivo de CauquenLabs**: actualmente hay un placeholder geométrico en
   `www/assets/logo-cauquenlabs.png`, usado en la pantalla de inicio y en "Acerca de" para
   representar a la empresa. Debe reemplazarse por el logo real manteniendo el mismo nombre de
@@ -160,6 +165,12 @@
 - **Nunca versionar el keystore de firma**: `.gitignore` excluye `*.keystore`, `*.jks` y
   `keystore.properties`. El proceso de generación queda documentado en `README.md`, pero el
   archivo de firma en sí es responsabilidad de quien publique la app, no se incluye en el repo.
+  **Actualización 2026-10-21**: el keystore ya se generó y se guardó, además, fuera por completo
+  de la carpeta del repo (en un directorio hermano), no solo gitignorado dentro de ella —
+  protección extra contra un `git add -A`/`-f` accidental. `android/app/build.gradle` detecta si
+  `android/keystore.properties` existe (`hasSigningConfig`) y solo aplica `signingConfig` al
+  `buildType release` en ese caso; si no existe (p. ej. al clonar en otra máquina sin el keystore),
+  el build no falla, simplemente genera un artefacto sin firmar, como antes.
 - **Gradle wrapper fijado a 9.5.1 (no al 8.14.3 que trae el template de Capacitor por defecto)**:
   la única JDK disponible en la máquina de build era la JBR empaquetada con Android Studio
   (JDK 25). Gradle 8.14.3 no puede *ejecutarse* sobre JDK 25 ("Unsupported class file major version
@@ -256,9 +267,9 @@
 
 ## Problemas conocidos / limitaciones
 
-- El `.aab` de `bundleRelease` no está firmado con una clave de producción (no hay
-  `signingConfig` de release definido a propósito, ver "Decisiones técnicas"); falta el paso de
-  firma documentado en `README.md` antes de poder subirlo a Play Console.
+- Todavía no se subió ningún `.aab` a Play Console (el bundle firmado ya existe, `Pulsit-release.aab`
+  en la raíz del repo, pero falta crear la app en Play Console y hacer la primera subida — ver
+  "Próximos pasos concretos").
 - El logo de CauquenLabs es un placeholder geométrico generado programáticamente, no el logo real
   de marca (pendiente a propósito, por pedido explícito del usuario).
 - No hay pruebas automatizadas de UI/responsive más allá de lo verificado manualmente (emuladores
@@ -270,14 +281,16 @@
 
 ## Próximos pasos concretos
 
-1. Instalar `Pulsit-debug.apk` (raíz del repo) en un teléfono físico vía USB/`adb install` o
+1. **Guardar una copia de respaldo del keystore y su contraseña** (`pulsit-release.keystore`,
+   fuera del repo, y la contraseña que eligió el usuario) en un lugar seguro y duradero — es
+   irrecuperable si se pierde.
+2. Instalar `Pulsit-debug.apk` (raíz del repo) en un teléfono físico vía USB/`adb install` o
    transfiriendo el archivo, y confirmar: feedback háptico real, audio, persistencia, y que todo
    el rediseño visual se vea bien fuera del emulador.
-2. Cuando CauquenLabs provea el logo definitivo: reemplazar `www/assets/logo-cauquenlabs.png`,
-   correr `npx cap sync`, regenerar los íconos nativos de `android/app/src/main/res/mipmap-*/`, y
-   recién ahí abordar el ícono de la app (explícitamente pospuesto hasta tener el logo real).
-3. Generar el keystore de firma siguiendo `README.md` y configurar Play App Signing.
-4. Generar el `.aab` de release firmado (con keystore real) y subirlo a Play Console como build
-   interno de prueba.
-5. Etiquetar la siguiente versión (`git tag v0.2.0`) una vez firmado y subido el primer build de
-   prueba.
+3. Crear la app en Play Console, subir `Pulsit-release.aab` (raíz del repo, ya firmado) como build
+   interno de prueba, y aceptar Play App Signing en el proceso.
+4. Cuando CauquenLabs provea el logo definitivo: reemplazar `www/assets/logo-cauquenlabs.png` y
+   quitar la nota "provisorio" de la pantalla "Acerca de" (`www/index.html`). El ícono de la app
+   no necesita tocarse (ya es un diseño propio, independiente del logo).
+5. Etiquetar la siguiente versión (`git tag v0.2.0`) una vez subido el primer build de prueba a
+   Play Console.
