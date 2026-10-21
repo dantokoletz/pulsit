@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Privacidad de Pulsit</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Work+Sans:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --bg: #faf9fc;
+    --surface: #ffffff;
+    --border: #e4e1ec;
+    --fg: #1d1b24;
+    --muted: #645f74;
+    --accent: #6c4fe0;
+    --accent-2: #0891a8;
+    --accent-soft: #efe9fd;
+    --font-display: 'Sora', system-ui, sans-serif;
+    --font-body: 'Work Sans', system-ui, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #11141a;
+      --surface: #171b24;
+      --border: #2a2f3c;
+      --fg: #f2f3f5;
+      --muted: #9aa3b2;
+      --accent: #9c8bf0;
+      --accent-2: #48dbfb;
+      --accent-soft: #241f3d;
+      color-scheme: dark;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body), system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    padding: 3rem 16px;
+  }
+
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  header {
+    margin-bottom: 2.5rem;
+  }
+
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-display), sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--accent);
+    letter-spacing: 0.01em;
+    margin-bottom: 1.25rem;
+  }
+
+  .wordmark .dot {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    flex: none;
+  }
+
+  h1 {
+    font-family: var(--font-display), sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.8rem, 5vw, 2.4rem);
+    line-height: 1.15;
+    margin: 0 0 0.6rem;
+  }
+
+  .updated {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .lead {
+    background: var(--accent-soft);
+    border: 1px solid var(--border);
+    border-radius: 0.9rem;
+    padding: 1.25rem 1.4rem;
+    margin: 2rem 0 2.5rem;
+  }
+
+  .lead p {
+    margin: 0;
+    font-size: 1.05rem;
+  }
+
+  .lead strong {
+    color: var(--accent);
+  }
+
+  section {
+    margin: 2.25rem 0;
+  }
+
+  h2 {
+    font-family: var(--font-display), sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin: 0 0 0.75rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  h2 .num {
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  p { margin: 0.75rem 0; max-width: 65ch; }
+
+  ul {
+    margin: 0.75rem 0;
+    padding-left: 1.3rem;
+  }
+
+  li { margin: 0.4rem 0; max-width: 62ch; }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.92rem;
+  }
+
+  .data-table th,
+  .data-table td {
+    text-align: left;
+    padding: 0.55rem 0.7rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .data-table th {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .data-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+  }
+
+  .data-table-wrap .data-table th:first-child,
+  .data-table-wrap .data-table td:first-child {
+    padding-left: 1rem;
+  }
+
+  .contact-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.9rem;
+    padding: 1.25rem 1.4rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.5rem;
+  }
+
+  .contact-card div { min-width: 0; }
+
+  .contact-card .label {
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.2rem;
+  }
+
+  .contact-card .value {
+    font-weight: 600;
+    word-break: break-word;
+  }
+
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="wordmark"><span class="dot" aria-hidden="true"></span>Pulsit</div>
+    <h1>Política de privacidad</h1>
+    <div class="updated">Última actualización: 21 de octubre de 2026</div>
+  </header>
+
+  <div class="lead">
+    <p><strong>En una frase:</strong> Pulsit no recopila, no transmite ni comparte ningún dato tuyo. Todo lo que la app guarda vive únicamente en tu dispositivo.</p>
+  </div>
+
+  <section>
+    <h2><span class="num">01</span> Quién es responsable</h2>
+    <p>Pulsit es un juego de memoria desarrollado por Daniel Antokoletz para CauquenLabs. Esta política aplica a la app Pulsit disponible en Google Play (<code>com.cauquenlabs.pulsit</code>).</p>
+  </section>
+
+  <section>
+    <h2><span class="num">02</span> Qué guarda la app, y dónde</h2>
+    <p>Pulsit guarda algunas preferencias y tu progreso de juego para que la app los recuerde entre partidas. Todo se guarda <strong>exclusivamente en tu dispositivo</strong>, usando el almacenamiento local de Android (<code>Capacitor Preferences</code>) — nunca se envía a CauquenLabs ni a ningún servidor.</p>
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>Dato</th><th>Para qué se usa</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Fase de campaña desbloqueada</td><td>Recordar hasta dónde llegaste</td></tr>
+          <tr><td>Configuración de modo personalizado</td><td>Recordar tus preferencias de juego (botones, tipo de estímulo, etc.)</td></tr>
+          <tr><td>Mejores puntajes</td><td>Mostrar tu mejor resultado por fase y en modo personalizado</td></tr>
+          <tr><td>Sonido, vibración y velocidad de secuencia</td><td>Recordar tus preferencias de accesibilidad y comodidad</td></tr>
+          <tr><td>Modo daltónico</td><td>Recordar si preferís formas además de color</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Ninguno de estos datos identifica a una persona: no hay nombre, email ni ningún dato personal involucrado. No hace falta crear una cuenta para jugar.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">03</span> Qué NO hace Pulsit</h2>
+    <ul>
+      <li>No recopila información personal (nombre, email, ubicación, contactos).</li>
+      <li>No usa cámara ni micrófono.</li>
+      <li>No muestra publicidad ni usa un ID de publicidad.</li>
+      <li>No incluye analíticas de uso ni reportes de fallos de terceros.</li>
+      <li>No comparte datos con terceros, porque no recopila datos para compartir.</li>
+      <li>No requiere ni usa conexión a internet para funcionar: Pulsit es un juego 100% local.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num">04</span> Permisos del sistema</h2>
+    <p>Android le muestra a Pulsit el permiso de <strong>Internet</strong> porque es parte del framework con el que está construida la app (Capacitor), que usa un componente de navegador interno para mostrar la interfaz. El código de Pulsit en sí nunca hace una conexión de red. El acceso a la <strong>vibración</strong> del dispositivo se usa solo para el feedback háptico del juego (un toque correcto o incorrecto), y se procesa enteramente en el dispositivo.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">05</span> Menores de edad</h2>
+    <p>Pulsit está pensada para todo público y no recopila información de ningún usuario, incluidos los menores de edad.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">06</span> Cómo borrar tus datos</h2>
+    <p>Como todo se guarda localmente, desinstalar Pulsit elimina automáticamente todo tu progreso y tus preferencias. No existe ninguna copia en un servidor que haya que borrar aparte, porque nunca se recopiló ninguna.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">07</span> Cambios a esta política</h2>
+    <p>Si esta política cambia, se va a reflejar actualizando la fecha al principio de esta página.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">08</span> Contacto</h2>
+    <div class="contact-card">
+      <div>
+        <div class="label">Consultas sobre privacidad</div>
+        <div class="value">dantokoletz@gmail.com</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Pulsit — CauquenLabs
+  </footer>
+</main>
+</body>
+</html>
