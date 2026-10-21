@@ -1,34 +1,39 @@
 # STATUS — estado verificado de Pulsit
 
-Última actualización: 2026-10-20 (sesión 2, continuada: build Android + rediseño visual +
-háptica/accesibilidad/rejugabilidad + pantalla de Ajustes + verificación en tablet)
+Última actualización: 2026-10-21 (sesión 3: fix de verdad del bug de rotación horizontal, pantalla
+"Acerca de" nueva, ícono nativo de la app rediseñado — ver "Última acción completada")
 
 ## ✅ Continuidad: qué pasa si se reinicia el equipo
 
-**Todo el código está commiteado.** `git log --oneline -1` debería mostrar
-`659dd31 Documenta la pantalla de Ajustes, el sonido global y la tablet` (o uno posterior). Un
-`git status --short` limpio (salvo lo listado abajo) confirma que no hay trabajo en progreso sin
-guardar. Nada de lo importante depende de un proceso en memoria:
+`git log --oneline -1` debería mostrar `2b2be6a Agrega halo en el botón activo y velocidad de
+secuencia configurable` (o uno posterior) **si ya se commiteó el trabajo de la sesión actual** —
+ver "Siguiente acción exacta" antes de asumir que está commiteado: al momento de escribir esto
+todavía NO lo está (ver abajo). Un `git status --short` muestra el detalle de qué falta guardar.
+Nada de lo importante depende de un proceso en memoria:
 
 - Los emuladores Android (`Medium_Phone_API_37.0` y `Pulsit_Tablet`) están **apagados**; no hace
   falta nada especial para reiniciar el equipo, simplemente no van a estar corriendo al volver.
 - `npm install` ya se corrió (hay `node_modules/`, no versionado); si se reinicia y se vuelve a
-  clonar/mover el repo, correr `npm install` de nuevo alcanza para reconstruir todo.
-- Quedan dos archivos **sin commitear a propósito** en la raíz del repo (`git status` los muestra
-  como `??`):
+  clonar/mover el repo, correr `npm install` de nuevo alcanza para reconstruir todo. **Nota**: en
+  esta sesión se instaló `sharp` temporalmente con `npm install --no-save sharp` para generar el
+  ícono nuevo (ver más abajo); no quedó en `package.json`/`package-lock.json`, así que un `npm
+  install` limpio no lo trae — solo hace falta si se vuelve a regenerar el ícono.
+- Quedan archivos **sin commitear a propósito** en la raíz del repo (`git status` los muestra como
+  `??`):
   - `pcb_wallpaper_4k.png`: imagen original de 4K/4.8MB que el usuario puso en la raíz; ya está
     procesada y en uso como `www/assets/background-circuit.webp`. No se tocó por no ser un archivo
     que yo haya creado (ver próximo paso si se quiere limpiar).
   - `Pulsit-debug.apk`: copia de conveniencia del build de debug más reciente, para instalar en un
     teléfono físico. Está en `.gitignore` (`*.apk`/`*.aab`) porque es un artefacto regenerable, no
-    código fuente — se recrea con `./gradlew assembleDebug` (ver `README.md`).
+    código fuente — se recrea con `./gradlew assembleDebug` (ver `README.md`). **Ya está
+    actualizado** con el ícono nuevo, "Acerca de" y el fix de rotación de esta sesión.
 
 **Para retomar el trabajo en una sesión nueva**: leer este archivo, `PROJECT.md` y `AGENTS.md`, y
 seguir la sección "Siguiente acción exacta" más abajo.
 
 ## Estado verificado (confirmado en este entorno de desarrollo)
 
-- `npm install` y `npm test` → **93/93 tests pasando**.
+- `npm install` y `npm test` → **97/97 tests pasando**.
 - `npx cap sync` corre sin errores (plugins detectados: `@capacitor/haptics@8.0.2`,
   `@capacitor/preferences@8.0.1`).
 - **Build Android verificado de punta a punta**: `./gradlew assembleDebug` y `./gradlew
@@ -64,14 +69,15 @@ seguir la sección "Siguiente acción exacta" más abajo.
 - **`.aab` sin firma de producción**: `bundleRelease` no tiene un `signingConfig` de release
   configurado (a propósito, ver `PROJECT.md`). Falta que quien publique la app genere su propio
   keystore y firme el bundle, siguiendo `README.md`. El usuario indicó que lo haría él mismo.
-- No se cuenta con el logo definitivo de CauquenLabs (se usó un placeholder geométrico). El usuario
-  pidió explícitamente **dejar el ícono de la app pendiente hasta tener el logo real** — no
-  retomarlo antes de que lo provea.
+- No se cuenta con el logo definitivo de CauquenLabs (se usó un placeholder geométrico), usado en
+  la pantalla de inicio y en "Acerca de". **Esto ya NO bloquea el ícono nativo de la app** — desde
+  esta sesión el ícono es un diseño propio de Pulsit, independiente del logo de CauquenLabs (ver
+  "Última acción completada").
 - El feedback háptico no se confirmó por tacto real (solo por ausencia de errores en logcat/tests);
-  falta verificación sensorial en un dispositivo físico — justo lo que el `Pulsit-debug.apk`
-  generado en esta sesión permite hacer.
-- Todo lo verificado hasta ahora es en emuladores; falta un dispositivo físico real para la
-  confirmación final (audio, háptica, rendimiento real, tamaño de pantalla real).
+  falta verificación sensorial en un dispositivo físico.
+- Todo lo verificado hasta ahora es en emuladores y en el navegador de escritorio; falta un
+  dispositivo físico real para la confirmación final (audio, háptica, rendimiento real, tamaño de
+  pantalla real, y específicamente el fix de rotación horizontal de esta sesión).
 
 ## Detalle técnico relevante para el próximo agente
 
@@ -111,41 +117,57 @@ size` antes de tapear, no asumir que la imagen mostrada está 1:1.
 
 ## Última acción completada
 
-Se agregó una pantalla de Ajustes que consolida sonido/vibración y modo daltónico como
-preferencias globales (antes el sonido era parte de la config de modo personalizado y el modo
-campaña no tenía forma de silenciarse). Se verificó el responsive en un emulador de tablet creado
-para la ocasión. Se generó `Pulsit-debug.apk` en la raíz del repo para que el usuario lo instale en
-un teléfono físico. Todo commiteado; 93/93 tests pasando.
+**Sesión 2026-10-21 (continuación), a pedido del usuario** — tres cambios, todos verificados en
+emulador Android real además de navegador (código sin commitear todavía, ver "Siguiente acción
+exacta"):
 
-**Sesión 2026-10-21**: a pedido del usuario tras probar `Pulsit-debug.apk` en su teléfono físico,
-se hicieron dos ajustes visuales/UX (código sin commitear todavía, ver "Siguiente acción exacta"):
-- Halo luminoso (`box-shadow` blanco) alrededor del botón activo durante la secuencia, para hacerlo
-  más visible (antes solo tenía brillo + escala).
-- Velocidad de la secuencia configurable desde un slider nuevo en Ajustes ("Rápida"↔"Lenta",
-  350-1100ms, por defecto 700ms — antes era un valor fijo de 550ms), persistida globalmente
-  (`pulsit.sequenceSpeedMs`).
+1. **Fix de verdad del bug de rotación horizontal**: el usuario reportó que, en horizontal, "la
+   pantalla queda fuera del celular, puedo moverla" — el fix de la sesión anterior
+   (`overflow-y: auto` en `.screen`) resultó insuficiente. Causa raíz: `#app` usaba `min-height`
+   (sin tope) y `.screen` no podía encogerse (`min-height: auto` por defecto en flex), así que el
+   scroll interno nunca se activaba y era la PÁGINA ENTERA la que crecía más allá de la ventana y
+   quedaba pannable. Fix real: `#app` pasa a `height: 100dvh` + `.screen` suma `min-height: 0`
+   (`www/css/styles.css`), más `overflow: hidden` en `html`/`body` como respaldo. También se agregó
+   una media query de `orientation: landscape` para achicar elementos decorativos en poca altura.
+   **Verificado en emulador real** con un tablero de 9 botones en horizontal: el contenido extra
+   ahora scrollea correctamente adentro de la pantalla en vez de desplazar toda la página.
+2. **Pantalla "Acerca de" nueva** (`screen-about`): descripción del juego, Empresa (CauquenLabs),
+   Desarrollador (Daniel Antokoletz), y el logo de CauquenLabs (mismo placeholder que la pantalla
+   de inicio) con nota de que está en diseño. Accesible desde un botón nuevo en el menú de inicio.
+3. **Ícono nativo de la app rediseñado**: el ícono anterior era literalmente la plantilla default
+   de Capacitor/Android Studio (nunca se había personalizado, sin relación con CauquenLabs). Se
+   reemplazó por un diseño propio generado por código (SVG + `sharp`): un anillo de 4 colores — los
+   mismos de `COLOR_PALETTE` en `game.js` — alrededor de un punto brillante, sobre fondo oscuro con
+   resplandor. Adaptive icon completo (foreground + background + legacy + round, 5 densidades),
+   fuente versionada en `www/assets/icon-pulsit-source.svg`. **No depende del logo de CauquenLabs**
+   (que sigue pendiente, sin cambios ahí). Verificado en el launcher del emulador — se ve bien
+   incluso en el tamaño más chico (48dp).
 
-Verificado: 97/97 tests pasando (4 nuevos para `getSequenceSpeedMs`/`setSequenceSpeedMs`), probado
-manualmente en navegador (Chrome, vía `npm run dev`) con la extensión Claude in Chrome — el halo se
-ve correctamente y se midió con un `MutationObserver` que el tiempo entre resaltes respeta el valor
-guardado (350ms configurado → ~354ms medido). `npx cap sync` + `./gradlew assembleDebug` corridos
-de nuevo, `Pulsit-debug.apk` regenerado en la raíz del repo con estos cambios. **No se probó aún en
-el teléfono físico ni en el emulador Android** (solo en navegador de escritorio).
+Verificado: 97/97 tests pasando (sin cambios de este bloque, ya estaban en 97 desde la sesión
+anterior), `npx cap sync` + `./gradlew assembleDebug` sin errores, instalado y probado en el
+emulador `Medium_Phone_API_37.0` (ícono en el launcher, pantalla "Acerca de", y el tablero de 9
+botones en horizontal con scroll funcionando). `Pulsit-debug.apk` en la raíz del repo ya está
+actualizado con estos tres cambios.
 
 ## Siguiente acción exacta
 
-1. **Commitear los cambios de esta sesión** (no se hizo todavía — no fue pedido explícitamente):
-   `documentacion/04-pantallas-y-flujo.md`, `documentacion/06-persistencia.md`,
-   `documentacion/08-accesibilidad-y-rejugabilidad.md`, `test/unit/storage.test.js`,
-   `www/css/styles.css`, `www/index.html`, `www/js/app.js`, `www/js/game.js`, `www/js/storage.js`.
+1. **Preguntar al usuario si commitear los cambios de esta sesión** (no se hizo todavía — no fue
+   pedido explícitamente, a diferencia de la sesión anterior). Archivos modificados/nuevos:
+   `AGENTS.md`, `README.md`, `documentacion/04-pantallas-y-flujo.md`,
+   `documentacion/08-accesibilidad-y-rejugabilidad.md`, `www/css/styles.css`, `www/index.html`,
+   `www/js/app.js`, `www/assets/icon-pulsit-source.svg` (nuevo), `www/assets/icon-pulsit-preview.png`
+   (nuevo), y en `android/app/src/main/res/`: los XML de `mipmap-anydpi-v26/`, los PNG de las 5
+   densidades `mipmap-*/` (incluye `ic_launcher_background.png` nuevo en cada una), y la
+   eliminación de `drawable/ic_launcher_background.xml`, `drawable-v24/ic_launcher_foreground.xml`
+   y `values/ic_launcher_background.xml` (quedaron sin uso).
 2. Instalar el `Pulsit-debug.apk` recién regenerado en el teléfono físico del usuario y confirmar
-   que el halo y la nueva velocidad se ven/sienten bien ahí también (lo verificado hasta ahora fue
-   solo en navegador de escritorio, no en el WebView nativo ni en emulador).
+   que el fix de rotación, "Acerca de" y el ícono nuevo se ven bien ahí también.
 3. Generar el keystore de firma de producción siguiendo `README.md` (sección "Publicar en Google
    Play Store") — el usuario mencionó que lo haría él mismo.
 4. Re-ejecutar `./gradlew bundleRelease` con la firma configurada y verificar que el `.aab`
    resultante esté correctamente firmado, subiéndolo a Play Console como build interno de prueba.
-5. Cuando CauquenLabs provea el logo definitivo (no antes, fue pedido explícito del usuario):
-   reemplazar `www/assets/logo-cauquenlabs.png`, correr `npx cap sync`, regenerar los íconos
-   nativos con el Image Asset Studio, y recién ahí retomar el ícono de la app.
+5. Cuando CauquenLabs provea el logo definitivo: reemplazar `www/assets/logo-cauquenlabs.png`
+   (usado en inicio y "Acerca de"), correr `npx cap sync`, y quitar la nota "provisorio, en diseño"
+   de `www/index.html` (`#screen-about`). El ícono de la app NO necesita tocarse en este paso (ya
+   no depende del logo de CauquenLabs).
 6. Etiquetar `v0.2.0` una vez firmado y subido el primer build de prueba a Play Console.

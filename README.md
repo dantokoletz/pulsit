@@ -130,17 +130,32 @@ perdés tu upload key, a diferencia del esquema 100% manual.
 - `applicationId`: `com.cauquenlabs.pulsit` (no cambiar una vez publicada: identifica la app de
   forma permanente en la Play Store).
 - Ícono y nombre: ver `android/app/src/main/res/` y `android/app/src/main/res/values/strings.xml`.
-  Deben actualizarse una vez que CauquenLabs provea el logo definitivo (ver `PROJECT.md`, sección
-  "Próximos pasos").
+  El ícono ya es el diseño definitivo de Pulsit (ver "Ícono de la app" más abajo) — no depende del
+  logo de CauquenLabs ni de ningún paso pendiente.
 
-## Reemplazar el logo placeholder
+## Ícono de la app
+
+El ícono nativo (`android/app/src/main/res/mipmap-*/ic_launcher*.png`) es un diseño propio de
+Pulsit (un anillo de 4 colores, los mismos que usan los botones del juego, alrededor de un punto
+central brillante), no depende del logo de CauquenLabs. Su fuente vectorial versionada es
+`www/assets/icon-pulsit-source.svg` (hay también `icon-pulsit-preview.png`, una vista previa
+de referencia a 512×512 px, no usada por la app).
+
+Para modificarlo: editar el SVG (o rehacer su generador, ver el historial de commits de
+`www/assets/icon-pulsit-source.svg` para un script de referencia que usa `sharp`) y regenerar los
+PNG de cada densidad (`mipmap-mdpi` a `mipmap-xxxhdpi`: `ic_launcher.png`, `ic_launcher_round.png`,
+`ic_launcher_foreground.png`, `ic_launcher_background.png`) — o, más simple, usar el **Image Asset
+Studio** de Android Studio (clic derecho sobre `res/` → `New` → `Image Asset`) apuntando al SVG.
+
+## Reemplazar el logo de CauquenLabs (placeholder)
 
 `www/assets/logo-cauquenlabs.png` es un placeholder geométrico de 512×512 px generado
-automáticamente. Para reemplazarlo:
+automáticamente, usado en la pantalla de inicio y en "Acerca de" para representar a la empresa
+(distinto del ícono de la app, ver arriba). Para reemplazarlo una vez que CauquenLabs provea el
+logo real:
 
-1. Sobrescribir ese archivo con el logo real de CauquenLabs (mantener el mismo nombre, mínimo
-   512×512 px, fondo transparente u opaco según el diseño final).
+1. Sobrescribir ese archivo (mantener el mismo nombre, mínimo 512×512 px, fondo transparente u
+   opaco según el diseño final).
 2. Correr `npx cap sync` para que se copie al proyecto Android.
-3. Regenerar los íconos nativos de la app (`android/app/src/main/res/mipmap-*/`) usando el **Image
-   Asset Studio** de Android Studio (clic derecho sobre `res/` → `New` → `Image Asset`), apuntando
-   al nuevo logo.
+3. Quitar la nota "logo provisorio, en diseño" de la pantalla "Acerca de" (`www/index.html`,
+   sección `#screen-about`) y el texto equivalente del `alt` de la imagen.

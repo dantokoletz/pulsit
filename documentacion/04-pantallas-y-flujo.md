@@ -32,6 +32,10 @@ mediante CSS (clase `.active`), sin recarga de página.
                                           └──────────────► (vuelve a screen-start)
 ```
 
+(No se incluyó en el diagrama para no sobrecargarlo, pero desde la pantalla de inicio también se
+puede entrar a **"ℹ Acerca de"** (`screen-about`, ver §4.3), que solo tiene un botón "Volver" hacia
+el inicio — igual de simple que Ajustes.)
+
 ## 4.1 Pantalla de inicio (`screen-start`)
 
 Contenido:
@@ -41,6 +45,8 @@ Contenido:
 - Botón **"Personalizado"**: navega a la pantalla de configuración personalizada.
 - Botón **"⚙ Ajustes"**: navega a la pantalla de ajustes globales (sonido/vibración, modo
   daltónico — ver abajo).
+- Botón **"ℹ Acerca de"**: navega a la pantalla informativa con los datos de la empresa, el
+  desarrollador y una descripción del juego (ver §4.3).
 - Al primer toque/click del usuario en esta pantalla, se reproduce un sonido suave en crescendo
   (ver [05-audio.md](05-audio.md)), salvo que el sonido esté desactivado en Ajustes. Se dispara una
   sola vez por carga de la app, y no bloquea la interacción (el toque que lo dispara también puede,
@@ -66,7 +72,20 @@ Se puede entrar a esta pantalla desde el inicio en cualquier momento (no solo an
 cambios aplican de inmediato, incluso si se abre Ajustes en medio de una sesión y se vuelve a jugar
 después.
 
-## 4.3 Pantalla de modo personalizado (`screen-custom`)
+## 4.3 Pantalla "Acerca de" (`screen-about`)
+
+Contenido:
+- Logo de CauquenLabs (mismo archivo que la pantalla de inicio, `www/assets/logo-cauquenlabs.png`),
+  con una nota aclarando que es provisorio mientras la empresa no provea el diseño definitivo.
+- Descripción corta del juego.
+- **Empresa**: CauquenLabs.
+- **Desarrollador**: Daniel Antokoletz.
+- Botón **"Volver"**: regresa a la pantalla de inicio.
+
+Es una pantalla puramente informativa, sin estado propio ni persistencia; se accede desde el botón
+**"ℹ Acerca de"** de la pantalla de inicio.
+
+## 4.4 Pantalla de modo personalizado (`screen-custom`)
 
 Contenido: formulario con los campos descritos en
 [03-modo-personalizado.md](03-modo-personalizado.md), más:
@@ -78,7 +97,7 @@ Al entrar a esta pantalla, el formulario se precompleta con la última configura
 los valores por defecto si es la primera vez). El sonido **no** es parte de este formulario (ver
 §4.2, Ajustes).
 
-## 4.4 Pantalla de juego (`screen-game`)
+## 4.5 Pantalla de juego (`screen-game`)
 
 Contenido:
 - **Número de fase luminoso**: solo en modo campaña, muestra el número de fase actual (1-10) con

@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108">
+    <defs>
+    <radialGradient id="bg-grad" cx="38%" cy="30%" r="85%">
+      <stop offset="0%" stop-color="#201a45" />
+      <stop offset="45%" stop-color="#121521" />
+      <stop offset="100%" stop-color="#05060a" />
+    </radialGradient>
+    <radialGradient id="glow-purple" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#6c5ce7" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="#6c5ce7" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glow-cyan" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#48dbfb" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#48dbfb" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="center-dot" cx="38%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#dfe3ea" />
+    </radialGradient>
+    <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="3.2" />
+    </filter></defs>
+    
+    <rect width="108" height="108" fill="url(#bg-grad)" />
+    <rect width="108" height="108" fill="url(#glow-purple)" />
+    <circle cx="78" cy="80" r="30" fill="url(#glow-cyan)" />
+    
+    <g filter="url(#soft-glow)" opacity="0.9">
+      <circle
+        cx="54" cy="54" r="20.5"
+        fill="none" stroke="#e63946" stroke-width="11"
+        stroke-linecap="round"
+        stroke-dasharray="26.20 102.60"
+        stroke-dashoffset="0.00"
+        transform="rotate(-45 54 54)"
+      />
+      <circle
+        cx="54" cy="54" r="20.5"
+        fill="none" stroke="#f1c453" stroke-width="11"
+        stroke-linecap="round"
+        stroke-dasharray="26.20 102.60"
+        stroke-dashoffset="-32.20"
+        transform="rotate(-45 54 54)"
+      />
+      <circle
+        cx="54" cy="54" r="20.5"
+        fill="none" stroke="#2a9d8f" stroke-width="11"
+        stroke-linecap="round"
+        stroke-dasharray="26.20 102.60"
+        stroke-dashoffset="-64.40"
+        transform="rotate(-45 54 54)"
+      />
+      <circle
+        cx="54" cy="54" r="20.5"
+        fill="none" stroke="#457b9d" stroke-width="11"
+        stroke-linecap="round"
+        stroke-dasharray="26.20 102.60"
+        stroke-dashoffset="-96.60"
+        transform="rotate(-45 54 54)"
+      /></g>
+    <g>
+      <circle
+        cx="54" cy="54" r="20.5"
+        fill="none" stroke="#e63946" stroke-width="11"
+        stroke-linecap="round"
+        stroke-dasharray="26.20 102.60"
+        stroke-dashoffset="0.00"
+        transform="rotate(-45 54 54)"
+      />
+      <circle
+        cx="54" cy="54" r="20.5"
+        fill="none" stroke="#f1c453" stroke-width="11"
+        stroke-linecap="round"
+        stroke-dasharray="26.20 102.60"
+        stroke-dashoffset="-32.20"
+        transform="rotate(-45 54 54)"
+      />
+      <circle
+        cx="54" cy="54" r="20.5"
+        fill="none" stroke="#2a9d8f" stroke-width="11"
+        stroke-linecap="round"
+        stroke-dasharray="26.20 102.60"
+        stroke-dashoffset="-64.40"
+        transform="rotate(-45 54 54)"
+      />
+      <circle
+        cx="54" cy="54" r="20.5"
+        fill="none" stroke="#457b9d" stroke-width="11"
+        stroke-linecap="round"
+        stroke-dasharray="26.20 102.60"
+        stroke-dashoffset="-96.60"
+        transform="rotate(-45 54 54)"
+      /></g>
+    <circle cx="54" cy="54" r="15.5" fill="#ffffff" opacity="0.18" filter="url(#soft-glow)" />
+    <circle cx="54" cy="54" r="13" fill="url(#center-dot)" />
+  </svg>

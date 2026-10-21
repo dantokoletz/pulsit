@@ -30,6 +30,7 @@ const hapticsEngine = new HapticsEngine();
 const screens = {
   start: document.getElementById('screen-start'),
   settings: document.getElementById('screen-settings'),
+  about: document.getElementById('screen-about'),
   custom: document.getElementById('screen-custom'),
   game: document.getElementById('screen-game'),
 };
@@ -54,6 +55,8 @@ const el = {
   progressFill: document.getElementById('progress-fill'),
   btnSettingsOpen: document.getElementById('btn-settings-open'),
   btnSettingsBack: document.getElementById('btn-settings-back'),
+  btnAboutOpen: document.getElementById('btn-about-open'),
+  btnAboutBack: document.getElementById('btn-about-back'),
   settingsSoundCheckbox: document.getElementById('settings-sound'),
   settingsColorblindCheckbox: document.getElementById('settings-colorblind'),
   settingsSpeedInput: document.getElementById('settings-speed'),
@@ -250,6 +253,16 @@ function initSettingsScreen() {
   });
 }
 
+function initAboutScreen() {
+  el.btnAboutOpen.addEventListener('click', () => {
+    showScreen('about');
+  });
+
+  el.btnAboutBack.addEventListener('click', () => {
+    showScreen('start');
+  });
+}
+
 function initCustomScreen() {
   const customFormController = new CustomModeForm(
     {
@@ -302,6 +315,7 @@ async function init() {
 
   initStartScreen();
   initSettingsScreen();
+  initAboutScreen();
   initCustomScreen();
   initGameScreen();
 }

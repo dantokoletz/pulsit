@@ -59,7 +59,9 @@ pulsit/
 │   └── assets/
 │       ├── logo-cauquenlabs.png    # PLACEHOLDER — reemplazar por el logo real de CauquenLabs
 │       ├── background-circuit.webp # fondo ACTIVO de las 3 pantallas — reemplazable (ver abajo)
-│       └── background-circuit.svg  # alternativa vectorial generada por código (no referenciada)
+│       ├── background-circuit.svg  # alternativa vectorial generada por código (no referenciada)
+│       ├── icon-pulsit-source.svg  # fuente del ícono nativo de la app (ver README.md)
+│       └── icon-pulsit-preview.png # vista previa 512×512 del ícono, no usada por la app
 ├── android/                   # proyecto Android generado por Capacitor
 │   └── ...                    # NO MODIFICAR A MANO salvo config nativa justificada (ver §5)
 ├── documentacion/             # documentación FUNCIONAL (qué hace la app, para humanos y agentes)
@@ -71,7 +73,13 @@ pulsit/
     └── reports/
 ```
 
-**Assets reemplazables**: `www/assets/logo-cauquenlabs.png` (logo, placeholder) y
+**Ícono nativo de la app** (`android/app/src/main/res/mipmap-*/ic_launcher*.png`): es un diseño
+propio de Pulsit (no depende del logo de CauquenLabs), con fuente vectorial versionada en
+`www/assets/icon-pulsit-source.svg`. Ver la sección "Ícono de la app" de `README.md` para cómo
+regenerarlo si se modifica.
+
+**Assets reemplazables**: `www/assets/logo-cauquenlabs.png` (logo de CauquenLabs, placeholder,
+usado en la pantalla de inicio y en "Acerca de" — distinto del ícono de la app) y
 `www/assets/background-circuit.webp` (fondo activo de las 3 pantallas, foto de circuito impreso)
 están pensados para sobrescribirse sin tocar código: el CSS los referencia por nombre de archivo
 (`www/css/styles.css` → `.cosmic-bg`), así que basta con reemplazar el archivo (manteniendo el

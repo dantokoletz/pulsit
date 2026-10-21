@@ -56,10 +56,29 @@
   inicio. El sonido dejó de ser parte de la config de modo personalizado (antes ni siquiera existía
   forma de desactivarlo en campaña) y pasó a `storage.getSoundEnabled`/`setSoundEnabled`, cargado
   una sola vez al iniciar la app y aplicado tanto a `AudioEngine` como a `HapticsEngine`.
-- **Rotación de pantalla verificada**: la app no fija orientación; al rotar, el CSS responsive
-  reacomoda todo automáticamente. Se detectó y corrigió que, en horizontal con tableros de varias
-  filas, el contenido podía no entrar en el alto disponible sin forma de scrollear — se agregó
-  `overflow-y: auto` a `.screen`, verificado con un swipe real en el emulador rotado.
+- **Rotación de pantalla verificada y corregida de fondo**: la app no fija orientación; al rotar,
+  el CSS responsive reacomoda todo automáticamente. El `overflow-y: auto` de `.screen` (sesión
+  anterior) resultó insuficiente: el usuario reportó que en horizontal la pantalla "quedaba afuera
+  del celular" y se podía "mover" — el bug real era que `#app` usaba `min-height` (sin tope) y
+  `.screen` no podía encogerse (`min-height: auto` por defecto en flex), así que el scroll interno
+  nunca se activaba y era la PÁGINA ENTERA la que crecía más allá de la ventana y quedaba pannable.
+  Fix: `#app` pasa a `height: 100dvh` (tope real) y `.screen` suma `min-height: 0`, más
+  `overflow: hidden` en `html`/`body` como respaldo. También se agregó una media query
+  `orientation: landscape` + `max-height: 500px` que achica logo/separaciones para necesitar menos
+  scroll. Verificado en navegador (sin overflow de página, `document.body.scrollHeight ===
+  window.innerHeight`) y en emulador real con un tablero de 9 botones en horizontal.
+- **Pantalla "Acerca de"** (`screen-about`, nueva): descripción del juego, Empresa (CauquenLabs),
+  Desarrollador (Daniel Antokoletz) y el logo de CauquenLabs (mismo placeholder de la pantalla de
+  inicio), con una nota de que es provisorio. Accesible desde un botón nuevo en la pantalla de
+  inicio.
+- **Ícono nativo de la app rediseñado**: el ícono por defecto era literalmente la plantilla
+  genérica de Capacitor/Android Studio (fondo teal #26A69A con una grilla y una cara tipo robot),
+  nunca había sido personalizado — no tenía relación con CauquenLabs. Se reemplazó por un diseño
+  propio de Pulsit (anillo de 4 colores — los mismos de `COLOR_PALETTE` en `game.js` — alrededor de
+  un punto central brillante, sobre fondo oscuro con resplandor), generado como adaptive icon
+  completo (foreground + background + legacy + round, las 5 densidades) a partir de un SVG maestro
+  versionado (`www/assets/icon-pulsit-source.svg`). No depende del logo de CauquenLabs ni de
+  ningún paso pendiente. Verificado en el launcher del emulador.
 - **Verificado en tablet**: emulador `Pulsit_Tablet` (perfil "10.1in WXGA", 800×1280 @ 160dpi,
   creado a mano editando `config.ini` ya que no había `avdmanager` disponible en esta máquina — ver
   `.project-corpus/state/STATUS.md`). El contenido queda centrado y bien proporcionado gracias al
@@ -91,12 +110,11 @@
   Falta que el publicador genere su propio keystore y firme el bundle final, según el procedimiento
   de `README.md`.
 - **Logo definitivo de CauquenLabs**: actualmente hay un placeholder geométrico en
-  `www/assets/logo-cauquenlabs.png`. Debe reemplazarse por el logo real manteniendo el mismo
-  nombre de archivo y dimensiones mínimas (512×512 px).
-- **Iconos nativos de la app** (`android/app/src/main/res/mipmap-*/ic_launcher*.png`): Capacitor
-  generó los íconos por defecto del template; deberían regenerarse a partir del logo definitivo de
-  CauquenLabs una vez provisto (por ejemplo, con el Image Asset Studio de Android Studio). El
-  usuario pidió explícitamente dejar esto pendiente hasta tener el logo real.
+  `www/assets/logo-cauquenlabs.png`, usado en la pantalla de inicio y en "Acerca de" para
+  representar a la empresa. Debe reemplazarse por el logo real manteniendo el mismo nombre de
+  archivo y dimensiones mínimas (512×512 px) — ver README.md, sección "Reemplazar el logo de
+  CauquenLabs". **Esto ya no bloquea el ícono nativo de la app** (ver "Funciona" más abajo: el
+  ícono es ahora un diseño propio de Pulsit, independiente de este logo).
 - **Pruebas en dispositivo físico**: todo lo verificado hasta ahora es en emuladores (teléfono y
   tablet); falta instalar `Pulsit-debug.apk` en un teléfono real (especialmente para confirmar por
   tacto el feedback háptico, que no se puede verificar desde el emulador/automatización).
@@ -216,7 +234,25 @@
   rotación de pantalla — en horizontal, con tableros de varias filas, el contenido podía exceder el
   alto disponible y quedar parcialmente inalcanzable (sin fix, no había ninguna forma de scroll).
   Se agregó scroll vertical a nivel de pantalla y se confirmó con un swipe real en el emulador
-  rotado a horizontal.
+  rotado a horizontal. **Corrección en la sesión siguiente**: este fix resultó incompleto (ver más
+  abajo, "`#app: height` en vez de `min-height`").
+- **`#app: height` en vez de `min-height`, `.screen: min-height: 0`**: el usuario reportó que, en
+  horizontal, la pantalla "quedaba afuera del celular" y se podía arrastrar — el `overflow-y: auto`
+  de `.screen` nunca llegaba a activarse porque un ítem flex tiene `min-height: auto` por defecto
+  (no se encoge por debajo de su contenido) y `#app` solo tenía un `min-height` (sin tope), así que
+  la PÁGINA ENTERA crecía más allá de la ventana en vez de scrollear adentro de `.screen`. Fijar
+  `#app` a `height: 100dvh` (un máximo real) y agregar `min-height: 0` a `.screen` resolvió el
+  problema de raíz; `overflow: hidden` en `html`/`body` queda como respaldo para que la página en
+  sí nunca sea pannable.
+- **Ícono de la app generado por código (SVG + `sharp`) en vez de un archivo subido a mano**: se
+  usó la paleta real de `COLOR_PALETTE` (`www/js/game.js`) para que el ícono se sienta parte del
+  mismo producto (un anillo de 4 colores — rojo, amarillo, verde azulado, azul — alrededor de un
+  punto brillante), en vez de un logo abstracto sin relación con el juego. Se armó un adaptive icon
+  completo (capas `foreground`/`background` separadas, más legacy/round) para las 5 densidades,
+  reemplazando los XML vectoriales de plantilla (`drawable/ic_launcher_background.xml`,
+  `drawable-v24/ic_launcher_foreground.xml`, que se eliminaron por quedar sin uso) por PNG
+  generados desde un SVG maestro versionado en `www/assets/icon-pulsit-source.svg`. Explícitamente
+  independiente del logo de CauquenLabs (que sigue pendiente, ver "Falta").
 
 ## Problemas conocidos / limitaciones
 

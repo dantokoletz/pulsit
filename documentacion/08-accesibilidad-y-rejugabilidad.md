@@ -67,9 +67,29 @@ de los botones en filas (ver [01-concepto-y-mecanica.md](01-concepto-y-mecanica.
 igual; lo que cambia es el tamaño disponible en pantalla.
 
 Con configuraciones de muchos botones (varias filas) en horizontal, el contenido puede no entrar
-completo en el alto disponible; para eso, la pantalla de juego permite hacer **scroll vertical**
-(verificado manualmente: con 5 botones en horizontal, hay que deslizar hacia arriba para ver la
-barra "Reiniciar nivel", que de otro modo quedaría fuera de la vista).
+completo en el alto disponible; para eso, cada pantalla permite hacer **scroll vertical acotado a
+sí misma** (`.screen`, con `overflow-y: auto`) en vez de depender de que todo entre sin scroll.
+
+- **Fix de contención** (reportado por el usuario: "la pantalla queda fuera del celular, puedo
+  moverla"): `#app` originalmente usaba `min-height: 100dvh` (una mínima, no un máximo) y `.screen`
+  dependía de `overflow-y: auto` sin acotar su propia altura. Como un ítem flex tiene
+  `min-height: auto` por defecto, no se encogía por debajo del tamaño de su contenido, así que el
+  scroll interno nunca llegaba a activarse: en vez de eso, `#app` (y con él toda la página) crecía
+  más allá de la ventana visible, y el usuario terminaba "arrastrando" la página entera en lugar de
+  hacer scroll dentro de la pantalla actual. El fix fija `#app` a `height: 100dvh` (un máximo real)
+  y agrega `min-height: 0` a `.screen`, para que el scroll quede contenido donde corresponde.
+  `html`/`body` llevan además `overflow: hidden` como respaldo, para que la página en sí nunca sea
+  pannable.
+- En orientación horizontal con poca altura disponible (`@media (orientation: landscape) and
+  (max-height: 500px)`), se reduce el tamaño de elementos decorativos (logo, subtítulo, separación
+  entre botones) para que la mayoría de las configuraciones entren sin necesitar scroll.
+- Verificado manualmente achicando la ventana del navegador a proporciones de teléfono en
+  horizontal: con 9 botones (3 filas), la página en sí no crece más allá de la ventana
+  (`document.body.scrollHeight === window.innerHeight`); lo que no entra scrollea dentro de
+  `.screen` únicamente.
+
+Fuente de verdad en código: `www/css/styles.css` (`#app`, `.screen`, y la media query de
+`orientation: landscape`).
 
 ## 8.5 Velocidad de la secuencia
 
