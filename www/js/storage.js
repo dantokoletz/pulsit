@@ -11,7 +11,16 @@ export const KEYS = {
   BEST_SCORES: 'pulsit.bestScores',
   COLORBLIND_MODE: 'pulsit.colorblindMode',
   SOUND_ENABLED: 'pulsit.soundEnabled',
+  SEQUENCE_SPEED_MS: 'pulsit.sequenceSpeedMs',
 };
+
+/**
+ * Velocidad (en ms por paso de secuencia: resalte + pausa) a la que se muestra la secuencia a
+ * memorizar, ajustable globalmente desde la pantalla de Ajustes. Más ms = más lento.
+ */
+export const MIN_SEQUENCE_SPEED_MS = 350;
+export const MAX_SEQUENCE_SPEED_MS = 1100;
+export const DEFAULT_SEQUENCE_SPEED_MS = 700;
 
 /** Clave de mejor puntaje para una fase de campaña dada. */
 export function campaignScoreKey(phaseNumber) {
@@ -163,5 +172,20 @@ export class StorageService {
   async setSoundEnabled(enabled) {
     await this.backend.set({ key: KEYS.SOUND_ENABLED, value: String(Boolean(enabled)) });
     return Boolean(enabled);
+  }
+
+  /** Velocidad de reproducción de la secuencia (ms por paso). Por defecto, `DEFAULT_SEQUENCE_SPEED_MS`. */
+  async getSequenceSpeedMs() {
+    const { value } = await this.backend.get({ key: KEYS.SEQUENCE_SPEED_MS });
+    const parsed = parseInt(value, 10);
+    return Number.isInteger(parsed) && parsed >= MIN_SEQUENCE_SPEED_MS && parsed <= MAX_SEQUENCE_SPEED_MS
+      ? parsed
+      : DEFAULT_SEQUENCE_SPEED_MS;
+  }
+
+  async setSequenceSpeedMs(ms) {
+    const clamped = Math.min(MAX_SEQUENCE_SPEED_MS, Math.max(MIN_SEQUENCE_SPEED_MS, Math.round(ms)));
+    await this.backend.set({ key: KEYS.SEQUENCE_SPEED_MS, value: String(clamped) });
+    return clamped;
   }
 }

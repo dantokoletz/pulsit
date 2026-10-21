@@ -5,6 +5,9 @@ import {
   DEFAULT_CUSTOM_CONFIG,
   campaignScoreKey,
   CUSTOM_SCORE_KEY,
+  MIN_SEQUENCE_SPEED_MS,
+  MAX_SEQUENCE_SPEED_MS,
+  DEFAULT_SEQUENCE_SPEED_MS,
 } from '../../www/js/storage.js';
 
 /** Backend en memoria que imita la interfaz get/set de Capacitor Preferences. */
@@ -176,6 +179,42 @@ describe('StorageService — sonido global (y háptica)', () => {
     await storage.setSoundEnabled(false);
     await storage.setSoundEnabled(true);
     expect(await storage.getSoundEnabled()).toBe(true);
+  });
+});
+
+describe('StorageService — velocidad de la secuencia', () => {
+  let backend;
+  let storage;
+
+  beforeEach(() => {
+    backend = createMemoryBackend();
+    storage = new StorageService(backend);
+  });
+
+  it('devuelve el valor por defecto si no hay nada guardado', async () => {
+    expect(await storage.getSequenceSpeedMs()).toBe(DEFAULT_SEQUENCE_SPEED_MS);
+  });
+
+  it('guarda y recupera un valor dentro del rango permitido', async () => {
+    await storage.setSequenceSpeedMs(900);
+    expect(await storage.getSequenceSpeedMs()).toBe(900);
+    expect(backend._store.get(KEYS.SEQUENCE_SPEED_MS)).toBe('900');
+  });
+
+  it('recorta valores por encima o por debajo del rango permitido', async () => {
+    await storage.setSequenceSpeedMs(9999);
+    expect(await storage.getSequenceSpeedMs()).toBe(MAX_SEQUENCE_SPEED_MS);
+
+    await storage.setSequenceSpeedMs(-50);
+    expect(await storage.getSequenceSpeedMs()).toBe(MIN_SEQUENCE_SPEED_MS);
+  });
+
+  it('ignora valores corruptos o fuera de rango guardados directamente y vuelve al valor por defecto', async () => {
+    await backend.set({ key: KEYS.SEQUENCE_SPEED_MS, value: 'no-es-un-numero' });
+    expect(await storage.getSequenceSpeedMs()).toBe(DEFAULT_SEQUENCE_SPEED_MS);
+
+    await backend.set({ key: KEYS.SEQUENCE_SPEED_MS, value: '5000' });
+    expect(await storage.getSequenceSpeedMs()).toBe(DEFAULT_SEQUENCE_SPEED_MS);
   });
 });
 

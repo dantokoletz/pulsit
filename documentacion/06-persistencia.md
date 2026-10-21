@@ -12,6 +12,7 @@ reabrir la app.
 | Mejores puntajes (por fase de campaña y modo personalizado) | `pulsit.bestScores` | JSON (mapa clave → entero) | `{}` |
 | Modo daltónico activado | `pulsit.colorblindMode` | `"true"` / `"false"` | `false` |
 | Sonido y vibración activados (global, pantalla de Ajustes) | `pulsit.soundEnabled` | `"true"` / `"false"` | `true` |
+| Velocidad de la secuencia (ms por paso: resalte + pausa, global, pantalla de Ajustes) | `pulsit.sequenceSpeedMs` | entero (string), 350 a 1100 | `700` |
 
 ## 6.2 Reglas de negocio
 

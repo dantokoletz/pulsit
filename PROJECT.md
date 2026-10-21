@@ -68,6 +68,15 @@
   conveniencia del último `app-debug.apk` generado, para instalar directamente en un teléfono
   físico sin tener que navegar `android/app/build/outputs/...`. Se regenera con
   `./gradlew assembleDebug` + copiar el archivo; no es parte del código fuente.
+- **Halo luminoso en el botón activo** durante la reproducción de la secuencia (`.game-button--active`
+  en `www/css/styles.css`): además del brillo/escala ya existentes, un `box-shadow` blanco de doble
+  capa (anillo + resplandor difuso) hace mucho más visible cuál es el botón "encendido" en cada paso.
+- **Velocidad de la secuencia configurable**: nuevo control deslizante en la pantalla de Ajustes
+  ("Velocidad de la secuencia", de "Rápida" a "Lenta") que regula cuánto dura cada paso de la
+  secuencia mostrada (resalte + pausa), persistido globalmente (`storage.getSequenceSpeedMs`/
+  `setSequenceSpeedMs`, 350-1100ms, por defecto 700ms — más lento que el valor fijo original de
+  550ms, a pedido del usuario). `GameController._playCurrentSequence` ahora calcula el tiempo de
+  resalte a partir de `config.sequenceSpeedMs` en vez de usar una constante fija.
 
 ### En progreso / parcial
 
@@ -181,6 +190,10 @@
 - **Vibración ligada al mismo casillero que el sonido, sin control propio**: se evaluó agregar un
   toggle separado para la vibración, pero se descartó para no sumar una opción más; el casillero
   "Sonido y vibración activados" ya representa "feedback sensorial activado" en la práctica.
+- **Velocidad de secuencia como "ms por paso" (resalte + pausa fija de 150ms), no como multiplicador
+  de la duración original**: permite que el slider mapee directamente a un rango de milisegundos
+  (350-1100) sin una capa de traducción adicional; la pausa entre pasos se mantuvo fija para que
+  siempre se note el "apagado" entre dos botones consecutivos, incluso con el mismo valor repetido.
 - **Sonido migrado de "parámetro de modo personalizado" a "ajuste global" + pantalla de Ajustes
   nueva**: a pedido del usuario ("junta sonido y modo daltónico en una pantalla de ajustes"). Se
   sacó `sound` de `validateCustomConfig`/`DEFAULT_CUSTOM_CONFIG` y se agregó

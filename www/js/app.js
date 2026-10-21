@@ -1,7 +1,14 @@
 // app.js
 // Punto de entrada de Pulsit: navegación entre pantallas e inicialización de módulos.
 
-import { StorageService, campaignScoreKey, CUSTOM_SCORE_KEY } from './storage.js';
+import {
+  StorageService,
+  campaignScoreKey,
+  CUSTOM_SCORE_KEY,
+  MIN_SEQUENCE_SPEED_MS,
+  MAX_SEQUENCE_SPEED_MS,
+  DEFAULT_SEQUENCE_SPEED_MS,
+} from './storage.js';
 import { AudioEngine } from './audio.js';
 import { HapticsEngine } from './haptics.js';
 import { CustomModeForm } from './custom.js';
@@ -49,6 +56,8 @@ const el = {
   btnSettingsBack: document.getElementById('btn-settings-back'),
   settingsSoundCheckbox: document.getElementById('settings-sound'),
   settingsColorblindCheckbox: document.getElementById('settings-colorblind'),
+  settingsSpeedInput: document.getElementById('settings-speed'),
+  settingsSpeedLabel: document.getElementById('settings-speed-label'),
 };
 
 let currentController = null;
@@ -57,7 +66,17 @@ let currentCampaignPhase = 1;
 let lastGameStart = null; // { mode, config, phaseLabel, levelNumber } — para "Reiniciar nivel"
 let colorblindMode = false;
 let soundEnabled = true;
+let sequenceSpeedMs = DEFAULT_SEQUENCE_SPEED_MS;
 let currentBest = 0;
+
+/** Etiqueta descriptiva para el valor actual del slider de velocidad (solo UI, no afecta la lógica). */
+function speedLabel(ms) {
+  if (ms <= 450) return 'Muy rápida';
+  if (ms <= 650) return 'Rápida';
+  if (ms <= 850) return 'Normal';
+  if (ms <= 1000) return 'Lenta';
+  return 'Muy lenta';
+}
 
 function showScreen(name) {
   Object.entries(screens).forEach(([key, section]) => {
@@ -106,7 +125,7 @@ async function startGame(mode, config, phaseLabel, levelNumber = null) {
 
   let buttonElements = [];
 
-  currentController = new GameController(config, {
+  currentController = new GameController({ ...config, sequenceSpeedMs }, {
     audioEngine,
     hapticsEngine,
     callbacks: {
@@ -119,8 +138,8 @@ async function startGame(mode, config, phaseLabel, levelNumber = null) {
           colorblindMode
         );
       },
-      onHighlight(position) {
-        highlightButton(buttonElements, position);
+      onHighlight(position, durationMs) {
+        highlightButton(buttonElements, position, durationMs);
       },
       onStateChange(state, data) {
         if (state === GAME_STATE.AWAITING_INPUT) {
@@ -194,6 +213,10 @@ function initStartScreen() {
 function initSettingsScreen() {
   el.settingsSoundCheckbox.checked = soundEnabled;
   el.settingsColorblindCheckbox.checked = colorblindMode;
+  el.settingsSpeedInput.min = String(MIN_SEQUENCE_SPEED_MS);
+  el.settingsSpeedInput.max = String(MAX_SEQUENCE_SPEED_MS);
+  el.settingsSpeedInput.value = String(sequenceSpeedMs);
+  el.settingsSpeedLabel.textContent = speedLabel(sequenceSpeedMs);
 
   el.settingsSoundCheckbox.addEventListener('change', async () => {
     soundEnabled = el.settingsSoundCheckbox.checked;
@@ -205,6 +228,17 @@ function initSettingsScreen() {
   el.settingsColorblindCheckbox.addEventListener('change', async () => {
     colorblindMode = el.settingsColorblindCheckbox.checked;
     await storageService.setColorblindMode(colorblindMode);
+  });
+
+  // 'input' actualiza en vivo (slider arrastrándose); 'change' persiste al soltar, para no
+  // escribir en storage en cada frame del arrastre.
+  el.settingsSpeedInput.addEventListener('input', () => {
+    sequenceSpeedMs = Number(el.settingsSpeedInput.value);
+    el.settingsSpeedLabel.textContent = speedLabel(sequenceSpeedMs);
+  });
+
+  el.settingsSpeedInput.addEventListener('change', async () => {
+    sequenceSpeedMs = await storageService.setSequenceSpeedMs(Number(el.settingsSpeedInput.value));
   });
 
   el.btnSettingsOpen.addEventListener('click', () => {
@@ -262,6 +296,7 @@ async function init() {
   // cablear cualquier pantalla, para que ya estén listas incluso para el sonido de bienvenida.
   soundEnabled = await storageService.getSoundEnabled();
   colorblindMode = await storageService.getColorblindMode();
+  sequenceSpeedMs = await storageService.getSequenceSpeedMs();
   audioEngine.setEnabled(soundEnabled);
   hapticsEngine.setEnabled(soundEnabled);
 

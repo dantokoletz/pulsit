@@ -17,6 +17,10 @@ import {
   MIN_SEQUENCE_LENGTH,
   TOTAL_CAMPAIGN_PHASES,
 } from './gameLogic.js';
+import { DEFAULT_SEQUENCE_SPEED_MS } from './storage.js';
+
+/** Pausa entre el fin del resalte de un botón y el comienzo del siguiente paso de la secuencia. */
+const SEQUENCE_STEP_GAP_MS = 150;
 
 const COLOR_PALETTE = [
   '#e63946', '#f1c453', '#2a9d8f', '#457b9d', '#9b5de5',
@@ -90,11 +94,14 @@ export class GameController {
     this.playerInput = [];
     this._setState(GAME_STATE.PLAYING_SEQUENCE, { sequence: this.sequence });
 
+    const stepMs = this.config.sequenceSpeedMs ?? DEFAULT_SEQUENCE_SPEED_MS;
+    const highlightMs = Math.max(150, stepMs - SEQUENCE_STEP_GAP_MS);
+
     for (const value of this.sequence) {
       const position = this.positionOf(value);
-      this.callbacks.onHighlight?.(position);
+      this.callbacks.onHighlight?.(position, highlightMs);
       this.audioEngine?.playTone(value);
-      await delay(550);
+      await delay(stepMs);
     }
 
     this._setState(GAME_STATE.AWAITING_INPUT, { expectedLength: this.sequence.length });

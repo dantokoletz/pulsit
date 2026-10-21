@@ -71,7 +71,27 @@ completo en el alto disponible; para eso, la pantalla de juego permite hacer **s
 (verificado manualmente: con 5 botones en horizontal, hay que deslizar hacia arriba para ver la
 barra "Reiniciar nivel", que de otro modo quedaría fuera de la vista).
 
-## 8.5 Verificación en tablet
+## 8.5 Velocidad de la secuencia
+
+Un control deslizante en la pantalla de Ajustes ("Velocidad de la secuencia") regula cuánto dura
+cada paso de la secuencia que se muestra para memorizar (el resalte visual del botón más la pausa
+hasta el siguiente paso), de 350ms (Rápida) a 1100ms (Lenta), por defecto 700ms — un poco más lento
+que el valor fijo original (550ms) con el que arrancó el proyecto, a pedido del usuario tras probar
+el modo campaña.
+
+- Es una preferencia **global**, persistida en el dispositivo (`pulsit.sequenceSpeedMs`, ver
+  [06-persistencia.md](06-persistencia.md)), aplica igual en campaña y en personalizado.
+- El resalte visual del botón dura un poco menos que el paso completo (hay una pausa fija de 150ms
+  entre el fin de un resalte y el comienzo del siguiente), para que siempre se note el "apagado"
+  entre dos botones consecutivos aunque sean el mismo valor repetido.
+- También se agregó un **halo luminoso** alrededor del botón activo durante la reproducción (además
+  del brillo y la ligera ampliación ya existentes), para que el botón resaltado sea más fácil de
+  distinguir a simple vista.
+
+Fuente de verdad en código: `www/js/storage.js` (`getSequenceSpeedMs`/`setSequenceSpeedMs`),
+`www/js/game.js` (`GameController._playCurrentSequence`).
+
+## 8.6 Verificación en tablet
 
 Además del emulador de teléfono, se verificó manualmente en un emulador de tablet (perfil "10.1in
 WXGA", 800×1280 @ 160dpi): el contenido queda centrado dentro del ancho máximo de cada pantalla

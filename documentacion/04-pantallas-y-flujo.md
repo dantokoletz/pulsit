@@ -56,6 +56,10 @@ Contenido:
   [08-accesibilidad-y-rejugabilidad.md](08-accesibilidad-y-rejugabilidad.md)), aplica igual en
   campaña y en personalizado. Se guarda al instante, sin necesidad de un botón "Guardar".
 - Casillero **"Modo daltónico (formas además de color)"**: también global e instantáneo.
+- Control deslizante **"Velocidad de la secuencia"**: ajusta cuán rápido se muestra (resalte +
+  sonido) cada paso de la secuencia a memorizar, de "Rápida" a "Lenta". También global e
+  instantáneo; se persiste al soltar el control (ver
+  [08-accesibilidad-y-rejugabilidad.md](08-accesibilidad-y-rejugabilidad.md)).
 - Botón **"Volver"**: regresa a la pantalla de inicio.
 
 Se puede entrar a esta pantalla desde el inicio en cualquier momento (no solo antes de jugar); los

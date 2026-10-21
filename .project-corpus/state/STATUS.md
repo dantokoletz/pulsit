@@ -117,17 +117,35 @@ campaña no tenía forma de silenciarse). Se verificó el responsive en un emula
 para la ocasión. Se generó `Pulsit-debug.apk` en la raíz del repo para que el usuario lo instale en
 un teléfono físico. Todo commiteado; 93/93 tests pasando.
 
+**Sesión 2026-10-21**: a pedido del usuario tras probar `Pulsit-debug.apk` en su teléfono físico,
+se hicieron dos ajustes visuales/UX (código sin commitear todavía, ver "Siguiente acción exacta"):
+- Halo luminoso (`box-shadow` blanco) alrededor del botón activo durante la secuencia, para hacerlo
+  más visible (antes solo tenía brillo + escala).
+- Velocidad de la secuencia configurable desde un slider nuevo en Ajustes ("Rápida"↔"Lenta",
+  350-1100ms, por defecto 700ms — antes era un valor fijo de 550ms), persistida globalmente
+  (`pulsit.sequenceSpeedMs`).
+
+Verificado: 97/97 tests pasando (4 nuevos para `getSequenceSpeedMs`/`setSequenceSpeedMs`), probado
+manualmente en navegador (Chrome, vía `npm run dev`) con la extensión Claude in Chrome — el halo se
+ve correctamente y se midió con un `MutationObserver` que el tiempo entre resaltes respeta el valor
+guardado (350ms configurado → ~354ms medido). `npx cap sync` + `./gradlew assembleDebug` corridos
+de nuevo, `Pulsit-debug.apk` regenerado en la raíz del repo con estos cambios. **No se probó aún en
+el teléfono físico ni en el emulador Android** (solo en navegador de escritorio).
+
 ## Siguiente acción exacta
 
-1. **(Pedido explícito pendiente)** El usuario va a instalar `Pulsit-debug.apk` en un teléfono
-   físico — si continúa la sesión, preguntar cómo salió (especialmente el feedback háptico, que no
-   se pudo verificar por tacto desde este entorno) y ayudar a resolver cualquier problema que
-   aparezca ahí que no se haya visto en el emulador.
-2. Generar el keystore de firma de producción siguiendo `README.md` (sección "Publicar en Google
-   Play Store") — el usuario mencionó que lo haría él mismo "mañana" en una sesión anterior.
-3. Re-ejecutar `./gradlew bundleRelease` con la firma configurada y verificar que el `.aab`
+1. **Commitear los cambios de esta sesión** (no se hizo todavía — no fue pedido explícitamente):
+   `documentacion/04-pantallas-y-flujo.md`, `documentacion/06-persistencia.md`,
+   `documentacion/08-accesibilidad-y-rejugabilidad.md`, `test/unit/storage.test.js`,
+   `www/css/styles.css`, `www/index.html`, `www/js/app.js`, `www/js/game.js`, `www/js/storage.js`.
+2. Instalar el `Pulsit-debug.apk` recién regenerado en el teléfono físico del usuario y confirmar
+   que el halo y la nueva velocidad se ven/sienten bien ahí también (lo verificado hasta ahora fue
+   solo en navegador de escritorio, no en el WebView nativo ni en emulador).
+3. Generar el keystore de firma de producción siguiendo `README.md` (sección "Publicar en Google
+   Play Store") — el usuario mencionó que lo haría él mismo.
+4. Re-ejecutar `./gradlew bundleRelease` con la firma configurada y verificar que el `.aab`
    resultante esté correctamente firmado, subiéndolo a Play Console como build interno de prueba.
-4. Cuando CauquenLabs provea el logo definitivo (no antes, fue pedido explícito del usuario):
+5. Cuando CauquenLabs provea el logo definitivo (no antes, fue pedido explícito del usuario):
    reemplazar `www/assets/logo-cauquenlabs.png`, correr `npx cap sync`, regenerar los íconos
    nativos con el Image Asset Studio, y recién ahí retomar el ícono de la app.
-5. Etiquetar `v0.2.0` una vez firmado y subido el primer build de prueba a Play Console.
+6. Etiquetar `v0.2.0` una vez firmado y subido el primer build de prueba a Play Console.

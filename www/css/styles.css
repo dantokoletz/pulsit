@@ -234,6 +234,19 @@ html, body {
   height: 24px;
 }
 
+.field input[type='range'] {
+  width: 100%;
+  accent-color: var(--color-accent);
+  min-height: 32px;
+}
+
+.field__range-ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
 /* ---------- Pantalla de juego ---------- */
 
 #screen-game {
@@ -348,7 +361,7 @@ html, body {
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 3px 0 rgba(0, 0, 0, 0.25);
-  transition: filter 0.1s ease, transform 0.08s ease;
+  transition: filter 0.1s ease, transform 0.08s ease, box-shadow 0.15s ease;
 }
 
 .game-button:active {
@@ -370,9 +383,15 @@ html, body {
   font-size: clamp(1.4rem, 6vw, 2rem);
 }
 
+/* Halo de luz alrededor del botón activo durante la reproducción de la secuencia, para que sea
+   más visible cuál es el botón "encendido" en cada paso (además del brillo/escala existentes). */
 .game-button--active {
   filter: brightness(1.6);
-  transform: scale(1.04);
+  transform: scale(1.08);
+  box-shadow:
+    0 3px 0 rgba(0, 0, 0, 0.25),
+    0 0 0 6px rgba(255, 255, 255, 0.3),
+    0 0 26px 10px rgba(255, 255, 255, 0.65);
 }
 
 /* Barra para reiniciar el nivel/partida actual desde cero, sin volver al menú. */
