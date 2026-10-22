@@ -114,10 +114,8 @@
 
 - **Subir el primer `.aab` a Play Console**: el `.aab` firmado ya se genera correctamente (ver
   "Funciona" y README.md, "Publicar en Google Play Store"); falta crear la app en Play Console,
-  subir `Pulsit-release.aab` como build interno de prueba y aceptar Play App Signing.
-- **Capturas de la ficha de Play Store desactualizadas**: `store-listing/screenshots/` se tomaron
-  antes de la campaña de 28 fases, del logo definitivo y del panel legible de la barra de estado
-  (muestran "Fase 1 / 10"). Conviene rehacerlas antes de publicar la ficha.
+  subir `Pulsit-release.aab` (versión 0.2.0, versionCode 2) como build interno de prueba y aceptar
+  Play App Signing. La ficha ya tiene su material listo en `store-listing/`.
 - **Pruebas en dispositivo físico**: todo lo verificado hasta ahora es en emuladores (teléfono y
   tablet); falta instalar `Pulsit-debug.apk` en un teléfono real (especialmente para confirmar por
   tacto el feedback háptico, que no se puede verificar desde el emulador/automatización).
@@ -283,10 +281,7 @@
 2. Instalar `Pulsit-debug.apk` (raíz del repo) en un teléfono físico vía USB/`adb install` o
    transfiriendo el archivo, y confirmar: feedback háptico real, audio, persistencia, y que todo
    el rediseño visual se vea bien fuera del emulador.
-3. Crear la app en Play Console, subir `Pulsit-release.aab` (raíz del repo, ya firmado) como build
-   interno de prueba, y aceptar Play App Signing en el proceso.
-4. Rehacer las capturas de `store-listing/screenshots/` con la versión actual (28 fases, logo
-   definitivo, barra de estado legible) y subirlas a la ficha junto con
-   `store-listing/feature-graphic.png`.
-5. Etiquetar la siguiente versión (`git tag v0.2.0`) una vez subido el primer build de prueba a
-   Play Console.
+3. Crear la app en Play Console, subir `Pulsit-release.aab` (raíz del repo, 0.2.0 / versionCode 2,
+   ya firmado) como build interno de prueba, aceptar Play App Signing, y cargar la ficha con
+   `store-listing/feature-graphic.png` y `store-listing/screenshots/`.
+4. Cada nueva subida a Play Console necesita un `versionCode` mayor en `android/app/build.gradle`.

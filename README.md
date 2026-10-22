@@ -180,6 +180,8 @@ el archivo manteniendo el nombre y correr `npx cap sync`.
 - `feature-graphic.png`: gráfico destacado de 1024×500 px, PNG de 24 bits sin alfa (como exige
   Play Console). Se regenera con `node store-listing/gen-feature-graphic.mjs` (requiere `sharp`:
   `npm install --no-save sharp`).
-- `screenshots/`: capturas de teléfono 1080×2400 para la ficha.
+- `screenshots/`: capturas de teléfono 1080×2400 para la ficha. Se regeneran con
+  `node store-listing/capture-screenshots.cjs` (Chrome headless sobre `npm run dev`; requiere
+  `npm install --no-save puppeteer-core`).
 
 Vive fuera de `www/` a propósito: todo lo que está en `www/` se copia al APK en cada `cap sync`.

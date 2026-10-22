@@ -1,7 +1,7 @@
 # STATUS — estado verificado de Pulsit
 
-Última actualización: 2026-10-22 (sesión 4: campaña de 28 fases, barra de estado legible, logo
-definitivo de CauquenLabs, material de la ficha de Play Store en `store-listing/`)
+Última actualización: 2026-10-22 (sesión 4: 28 fases, legibilidad, logo definitivo, voseo, capturas
+nuevas y build 0.2.0 / versionCode 2 firmado, listo para subir a Play Console)
 
 ## ✅ Continuidad: qué pasa si se reinicia el equipo
 
@@ -12,8 +12,7 @@ Todo el trabajo está commiteado (`git log --oneline -3`). Nada depende de un pr
   Sin ambos no se puede volver a firmar un `.aab` compatible — el usuario debe tener un backup.
 - Archivos sin commitear a propósito en la raíz: `pcb_wallpaper_4k.png` (original del fondo, ya
   procesado a `www/assets/background-circuit.webp`), `Pulsit-debug.apk` y `Pulsit-release.aab`
-  (gitignorados, regenerables). **Ambos builds son ANTERIORES a esta sesión**: no incluyen las 28
-  fases, el logo definitivo ni la barra de estado legible; hay que regenerarlos.
+  (gitignorados, regenerables). Ambos builds son la versión **0.2.0 (versionCode 2)**, con todos los cambios de la sesión 4.
 - `sharp` y `puppeteer-core` no son dependencias del proyecto: `sharp` se instala con
   `npm install --no-save sharp` solo para regenerar el ícono o el feature graphic.
 
@@ -134,16 +133,20 @@ size` antes de tapear, no asumir que la imagen mostrada está 1:1.
    rechazaría) y con el lema "Memorizá. Repetí. Superá cada fase.".
 5. Textos de la app unificados en **voseo** a pedido del usuario (inicio: "Memorizá. Repetí. Superá
 cada fase."; juego: "Observá la secuencia..."). Convención agregada a `AGENTS.md`.
-6. `npm test` → 98/98; `npx cap sync` OK.
+6. Paneles translúcidos también en los formularios de Ajustes y Modo personalizado.
+7. Capturas de la tienda rehechas (1080×2400, Chrome headless, script
+   `store-listing/capture-screenshots.cjs`).
+8. Versión subida a **0.2.0 / versionCode 2**; `Pulsit-debug.apk` y `Pulsit-release.aab`
+   regenerados, `.aab` verificado con `jarsigner` y `aapt2 dump badging`. Tag `v0.2.0`.
+9. `npm test` → 98/98; `npx cap sync` OK.
 
 ## Siguiente acción exacta
 
-1. **Rehacer las capturas** de `store-listing/screenshots/`: son de antes de esta sesión (muestran
-   "Fase 1 / 10", el logo viejo y la barra sin panel).
-2. Regenerar `Pulsit-debug.apk` y `Pulsit-release.aab` (`./gradlew assembleDebug bundleRelease`,
-   ver "Detalle técnico") y probar el APK en el teléfono físico del usuario.
-3. Recordarle al usuario que respalde el keystore y la contraseña fuera de esta máquina.
-4. Crear la app en Play Console, subir el `.aab` nuevo como prueba interna, aceptar Play App
-   Signing, cargar la ficha (feature graphic + capturas + URL de la política de privacidad en
-   GitHub Pages, `docs/privacy-policy.html`).
-5. Etiquetar `v0.2.0` tras la primera subida a Play Console.
+1. **Lo hace el usuario (el agente no tiene acceso a Play Console)**: crear la app en Play Console,
+   subir `Pulsit-release.aab` a prueba interna, aceptar Play App Signing y cargar la ficha
+   (`store-listing/feature-graphic.png`, `store-listing/screenshots/`, URL de la política de
+   privacidad en GitHub Pages).
+2. Hacer push de `master` y del tag `v0.2.0` a `origin` si el usuario lo confirma.
+3. Probar `Pulsit-debug.apk` en el teléfono físico del usuario.
+4. Recordarle al usuario que respalde el keystore y la contraseña fuera de esta máquina.
+5. Para la próxima subida: incrementar `versionCode` en `android/app/build.gradle`.

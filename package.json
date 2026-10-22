@@ -1,6 +1,6 @@
 {
   "name": "pulsit",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "Pulsit — juego de memoria y concentración estilo Simón, de CauquenLabs.",
   "main": "index.js",
   "scripts": {

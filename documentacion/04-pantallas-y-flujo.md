@@ -104,7 +104,8 @@ Contenido:
   un estilo de neón/glow. No se muestra en modo personalizado (no hay un "número de fase").
 - Barra de estado: fase actual (o "Modo personalizado"). Número de fase, textos y barra de progreso
   van sobre un panel oscuro translúcido para que se lean sobre la foto de circuito del fondo (lo
-  mismo el botón "Reiniciar nivel").
+  mismo el botón "Reiniciar nivel"). Los formularios de Ajustes y Modo personalizado usan el
+  mismo panel.
 - **Barra de progreso**: indica visualmente cuánto falta de la secuencia actual para superar la
   fase/partida (`sequenceLength / maxSequenceLength`), además del texto `Secuencia: X / N`.
 - Botón **"Menú"**: abandona la partida en curso y vuelve a la pantalla de inicio.
