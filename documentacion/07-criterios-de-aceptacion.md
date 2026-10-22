@@ -5,11 +5,11 @@ Cada ítem indica dónde verificarlo (manualmente y/o con qué test automatizado
 
 - [x] El juego inicia en la pantalla de bienvenida con el logo y el sonido crescendo.
       → Manual + `www/js/audio.js` (`playWelcomeCrescendo`).
-- [x] El modo campaña respeta la progresión de fases especificada en la tabla de la sección 2.2.
+- [x] El modo campaña respeta la progresión de 28 fases de `documentacion/02-progresion-niveles.md`.
       → `test/unit/gameLogic.test.js` (tabla `CAMPAIGN_PHASES`).
 - [x] Los botones cambian de posición cuando la fase lo requiere.
       → `test/unit/gameLogic.test.js` (`generateLayout`) y
-        `test/integration/campaign-flow.test.js` (fase 5, con reposición).
+        `test/integration/campaign-flow.test.js` (fase 7, con reposición).
 - [x] Cada botón tiene sonido propio.
       → `test/unit/audio.test.js` (`frequencyForValue`, tonos únicos por valor).
 - [x] El modo personalizado permite todas las configuraciones descritas.

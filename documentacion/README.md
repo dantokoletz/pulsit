@@ -9,7 +9,7 @@ independiente de la documentación técnica para agentes de IA que vive en la ra
 | Documento | Contenido |
 |---|---|
 | [01-concepto-y-mecanica.md](01-concepto-y-mecanica.md) | Qué es Pulsit, mecánica base tipo "Simón" |
-| [02-progresion-niveles.md](02-progresion-niveles.md) | Las 10 fases del modo campaña, reglas de avance |
+| [02-progresion-niveles.md](02-progresion-niveles.md) | Las 28 fases del modo campaña, reglas de avance |
 | [03-modo-personalizado.md](03-modo-personalizado.md) | Parámetros configurables por el jugador |
 | [04-pantallas-y-flujo.md](04-pantallas-y-flujo.md) | Pantallas de la app y navegación entre ellas |
 | [05-audio.md](05-audio.md) | Diseño sonoro: tonos por botón, crescendo de bienvenida |

@@ -152,8 +152,8 @@ describe('Modo campaña — fase 1 (3 botones, colores, sin reposición)', () =>
     expect(hapticsEngine.impactLight).not.toHaveBeenCalled();
   });
 
-  it('en fases con reposición (fase 5), el layout cambia tras una ronda correcta', async () => {
-    const config = buildCampaignConfig(5, 4); // fase 5: 5 botones, colores, reposition=true
+  it('en fases con reposición (fase 7), el layout cambia tras una ronda correcta', async () => {
+    const config = buildCampaignConfig(7, 4); // fase 7: 4 botones, colores, reposition=true
     let buttons = [];
     const layoutsSeen = [];
 
@@ -174,7 +174,7 @@ describe('Modo campaña — fase 1 (3 botones, colores, sin reposición)', () =>
     await waitFor(() => layoutsSeen.length >= 2);
 
     expect(layoutsSeen).toHaveLength(2);
-    // El layout es una permutación válida de los mismos 5 valores en ambos casos.
-    expect([...layoutsSeen[1]].sort()).toEqual([0, 1, 2, 3, 4]);
+    // El layout es una permutación válida de los mismos 4 valores en ambos casos.
+    expect([...layoutsSeen[1]].sort()).toEqual([0, 1, 2, 3]);
   });
 });

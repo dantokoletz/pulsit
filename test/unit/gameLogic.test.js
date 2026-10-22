@@ -21,33 +21,41 @@ import {
 } from '../../www/js/gameLogic.js';
 
 describe('CAMPAIGN_PHASES', () => {
-  it('define exactamente 10 fases', () => {
-    expect(CAMPAIGN_PHASES).toHaveLength(10);
-    expect(TOTAL_CAMPAIGN_PHASES).toBe(10);
+  it('define 28 fases (4 por cada cantidad de botones de 3 a 9)', () => {
+    expect(CAMPAIGN_PHASES).toHaveLength(28);
+    expect(TOTAL_CAMPAIGN_PHASES).toBe(28);
   });
 
-  it('respeta la tabla de progresión de la especificación (sección 2.2)', () => {
-    const expected = [
+  it('para 3 botones: colores fijos, números fijos, colores móviles, números móviles', () => {
+    expect(CAMPAIGN_PHASES.slice(0, 4)).toEqual([
       { phase: 1, buttons: 3, stimulusType: 'colors', reposition: false },
       { phase: 2, buttons: 3, stimulusType: 'numbers', reposition: false },
-      { phase: 3, buttons: 4, stimulusType: 'colors', reposition: false },
-      { phase: 4, buttons: 4, stimulusType: 'numbers', reposition: false },
-      { phase: 5, buttons: 5, stimulusType: 'colors', reposition: true },
-      { phase: 6, buttons: 5, stimulusType: 'numbers', reposition: true },
-      { phase: 7, buttons: 6, stimulusType: 'colors', reposition: false },
-      { phase: 8, buttons: 7, stimulusType: 'numbers', reposition: false },
-      { phase: 9, buttons: 8, stimulusType: 'colors', reposition: true },
-      { phase: 10, buttons: 9, stimulusType: 'numbers', reposition: true },
+      { phase: 3, buttons: 3, stimulusType: 'colors', reposition: true },
+      { phase: 4, buttons: 3, stimulusType: 'numbers', reposition: true },
+    ]);
+  });
+
+  it('repite el mismo ciclo de 4 fases para cada cantidad de botones de 3 a 9', () => {
+    const cycle = [
+      ['colors', false],
+      ['numbers', false],
+      ['colors', true],
+      ['numbers', true],
     ];
-    expect(CAMPAIGN_PHASES).toEqual(expected);
+    CAMPAIGN_PHASES.forEach((p, i) => {
+      expect(p.phase).toBe(i + 1);
+      expect(p.buttons).toBe(3 + Math.floor(i / 4));
+      expect([p.stimulusType, p.reposition]).toEqual(cycle[i % 4]);
+    });
+    expect(CAMPAIGN_PHASES[27].buttons).toBe(9);
   });
 });
 
 describe('getPhaseConfig', () => {
   it('devuelve la configuración correcta para una fase válida', () => {
-    expect(getPhaseConfig(5)).toEqual({
-      phase: 5,
-      buttons: 5,
+    expect(getPhaseConfig(7)).toEqual({
+      phase: 7,
+      buttons: 4,
       stimulusType: 'colors',
       reposition: true,
     });
@@ -55,18 +63,18 @@ describe('getPhaseConfig', () => {
 
   it('devuelve null para una fase inexistente', () => {
     expect(getPhaseConfig(0)).toBeNull();
-    expect(getPhaseConfig(11)).toBeNull();
+    expect(getPhaseConfig(29)).toBeNull();
   });
 });
 
 describe('getNextPhase', () => {
   it('incrementa la fase mientras no sea la última', () => {
     expect(getNextPhase(1)).toBe(2);
-    expect(getNextPhase(9)).toBe(10);
+    expect(getNextPhase(27)).toBe(28);
   });
 
   it('devuelve null tras la última fase', () => {
-    expect(getNextPhase(10)).toBeNull();
+    expect(getNextPhase(28)).toBeNull();
   });
 });
 

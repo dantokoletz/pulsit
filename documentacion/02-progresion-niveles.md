@@ -1,6 +1,8 @@
 # 2. Progresión de niveles — Modo campaña
 
-El modo campaña consiste en 10 fases fijas, de dificultad creciente. El jugador avanza
+El modo campaña consiste en 28 fases fijas, de dificultad creciente: para cada cantidad de
+botones (de 3 a 9) se juega el mismo ciclo de 4 fases — colores fijos, números fijos, colores
+que cambian de posición y números que cambian de posición. El jugador avanza
 linealmente: debe superar la fase `N` para desbloquear la fase `N+1`.
 
 ## Tabla de fases
@@ -9,14 +11,32 @@ linealmente: debe superar la fase `N` para desbloquear la fase `N+1`.
 |------|---------|-----------------|------------------|------------------------|-----------|
 | 1  | 3 | Colores  | Sí | No  | 2 → 10 |
 | 2  | 3 | Números  | Sí | No  | 2 → 10 |
-| 3  | 4 | Colores  | Sí | No  | 2 → 10 |
-| 4  | 4 | Números  | Sí | No  | 2 → 10 |
-| 5  | 5 | Colores  | Sí | Sí  | 2 → 10 |
-| 6  | 5 | Números  | Sí | Sí  | 2 → 10 |
-| 7  | 6 | Colores  | Sí | No  | 2 → 10 |
-| 8  | 7 | Números  | Sí | No  | 2 → 10 |
-| 9  | 8 | Colores  | Sí | Sí  | 2 → 10 |
-| 10 | 9 | Números  | Sí | Sí  | 2 → 10 |
+| 3  | 3 | Colores  | Sí | Sí  | 2 → 10 |
+| 4  | 3 | Números  | Sí | Sí  | 2 → 10 |
+| 5  | 4 | Colores  | Sí | No  | 2 → 10 |
+| 6  | 4 | Números  | Sí | No  | 2 → 10 |
+| 7  | 4 | Colores  | Sí | Sí  | 2 → 10 |
+| 8  | 4 | Números  | Sí | Sí  | 2 → 10 |
+| 9  | 5 | Colores  | Sí | No  | 2 → 10 |
+| 10 | 5 | Números  | Sí | No  | 2 → 10 |
+| 11 | 5 | Colores  | Sí | Sí  | 2 → 10 |
+| 12 | 5 | Números  | Sí | Sí  | 2 → 10 |
+| 13 | 6 | Colores  | Sí | No  | 2 → 10 |
+| 14 | 6 | Números  | Sí | No  | 2 → 10 |
+| 15 | 6 | Colores  | Sí | Sí  | 2 → 10 |
+| 16 | 6 | Números  | Sí | Sí  | 2 → 10 |
+| 17 | 7 | Colores  | Sí | No  | 2 → 10 |
+| 18 | 7 | Números  | Sí | No  | 2 → 10 |
+| 19 | 7 | Colores  | Sí | Sí  | 2 → 10 |
+| 20 | 7 | Números  | Sí | Sí  | 2 → 10 |
+| 21 | 8 | Colores  | Sí | No  | 2 → 10 |
+| 22 | 8 | Números  | Sí | No  | 2 → 10 |
+| 23 | 8 | Colores  | Sí | Sí  | 2 → 10 |
+| 24 | 8 | Números  | Sí | Sí  | 2 → 10 |
+| 25 | 9 | Colores  | Sí | No  | 2 → 10 |
+| 26 | 9 | Números  | Sí | No  | 2 → 10 |
+| 27 | 9 | Colores  | Sí | Sí  | 2 → 10 |
+| 28 | 9 | Números  | Sí | Sí  | 2 → 10 |
 
 Fuente de verdad en código: `www/js/gameLogic.js`, constante `CAMPAIGN_PHASES`.
 
@@ -39,4 +59,7 @@ Fuente de verdad en código: `www/js/gameLogic.js`, constante `CAMPAIGN_PHASES`.
 - El progreso se mide como "la fase más alta desbloqueada", persistida en el dispositivo (ver
   [06-persistencia.md](06-persistencia.md)).
 - El botón **"Jugar"** de la pantalla de inicio siempre lleva a la fase desbloqueada más alta.
-- Superar la fase 10 completa la campaña; el juego debe comunicarlo con un mensaje de felicitación.
+- Superar la fase 28 completa la campaña; el juego debe comunicarlo con un mensaje de felicitación.
+
+> **Nota:** la tabla de 10 fases de la especificación original (`pulsit.md`, sección 2.2) fue
+> reemplazada por este ciclo de 28 fases a pedido del dueño del producto (2026-10-22).

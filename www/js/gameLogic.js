@@ -2,28 +2,35 @@
 // Lógica pura del juego Pulsit: sin DOM, sin Web Audio, sin storage.
 // Diseñado para ser 100% testeable de forma unitaria.
 
-/**
- * Definición de las 10 fases del modo campaña (sección 2.2 de la spec).
- * `stimulusType`: 'colors' | 'numbers'
- * `reposition`: si true, los botones cambian de posición en pantalla tras cada ronda exitosa.
- */
-export const CAMPAIGN_PHASES = [
-  { phase: 1, buttons: 3, stimulusType: 'colors', reposition: false },
-  { phase: 2, buttons: 3, stimulusType: 'numbers', reposition: false },
-  { phase: 3, buttons: 4, stimulusType: 'colors', reposition: false },
-  { phase: 4, buttons: 4, stimulusType: 'numbers', reposition: false },
-  { phase: 5, buttons: 5, stimulusType: 'colors', reposition: true },
-  { phase: 6, buttons: 5, stimulusType: 'numbers', reposition: true },
-  { phase: 7, buttons: 6, stimulusType: 'colors', reposition: false },
-  { phase: 8, buttons: 7, stimulusType: 'numbers', reposition: false },
-  { phase: 9, buttons: 8, stimulusType: 'colors', reposition: true },
-  { phase: 10, buttons: 9, stimulusType: 'numbers', reposition: true },
-];
-
 export const MIN_SEQUENCE_LENGTH = 2;
 export const DEFAULT_MAX_SEQUENCE_LENGTH = 10;
 export const MIN_CUSTOM_BUTTONS = 3;
 export const MAX_CUSTOM_BUTTONS = 9;
+
+/**
+ * Ciclo de 4 fases que se repite para cada cantidad de botones: colores fijos, números fijos,
+ * colores que cambian de posición, números que cambian de posición.
+ */
+const PHASE_CYCLE = [
+  { stimulusType: 'colors', reposition: false },
+  { stimulusType: 'numbers', reposition: false },
+  { stimulusType: 'colors', reposition: true },
+  { stimulusType: 'numbers', reposition: true },
+];
+
+/**
+ * Fases del modo campaña: el ciclo de PHASE_CYCLE aplicado a 3, 4, ..., 9 botones
+ * (7 cantidades × 4 fases = 28 fases).
+ * `stimulusType`: 'colors' | 'numbers'
+ * `reposition`: si true, los botones cambian de posición en pantalla tras cada ronda exitosa.
+ */
+export const CAMPAIGN_PHASES = [];
+for (let buttons = MIN_CUSTOM_BUTTONS; buttons <= MAX_CUSTOM_BUTTONS; buttons++) {
+  for (const step of PHASE_CYCLE) {
+    CAMPAIGN_PHASES.push({ phase: CAMPAIGN_PHASES.length + 1, buttons, ...step });
+  }
+}
+
 export const TOTAL_CAMPAIGN_PHASES = CAMPAIGN_PHASES.length;
 
 /**
