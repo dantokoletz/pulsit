@@ -132,7 +132,9 @@ size` antes de tapear, no asumir que la imagen mostrada está 1:1.
 4. **Material de la tienda** movido a `store-listing/` (fuera de `www/`, para no inflar el APK).
    El feature graphic se regeneró a 1024×500 RGB sin alfa (antes salía 5461×2667 con alfa, que Play
    rechazaría) y con el lema "Memorizá. Repetí. Superá cada fase.".
-5. `npm test` → 98/98; `npx cap sync` OK.
+5. Textos de la app unificados en **voseo** a pedido del usuario (inicio: "Memorizá. Repetí. Superá
+cada fase."; juego: "Observá la secuencia..."). Convención agregada a `AGENTS.md`.
+6. `npm test` → 98/98; `npx cap sync` OK.
 
 ## Siguiente acción exacta
 
@@ -145,5 +147,3 @@ size` antes de tapear, no asumir que la imagen mostrada está 1:1.
    Signing, cargar la ficha (feature graphic + capturas + URL de la política de privacidad en
    GitHub Pages, `docs/privacy-policy.html`).
 5. Etiquetar `v0.2.0` tras la primera subida a Play Console.
-6. Pendiente de decidir con el usuario: la app mezcla tú y vos ("Memoriza. Repite. Supera" en el
-   inicio, "memorizá... repetilas" en "Acerca de"); conviene unificar.

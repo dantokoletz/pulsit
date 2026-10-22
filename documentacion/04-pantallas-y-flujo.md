@@ -108,7 +108,7 @@ Contenido:
 - **Barra de progreso**: indica visualmente cuánto falta de la secuencia actual para superar la
   fase/partida (`sequenceLength / maxSequenceLength`), además del texto `Secuencia: X / N`.
 - Botón **"Menú"**: abandona la partida en curso y vuelve a la pantalla de inicio.
-- Mensaje de estado: "Observa la secuencia...", "Tu turno", resultado de fase superada, o mensaje
+- Mensaje de estado: "Observá la secuencia...", "Tu turno", resultado de fase superada, o mensaje
   de derrota con la longitud de secuencia alcanzada.
 - Tablero de botones (circulares, agrupados en filas fijas según la cantidad — ver
   [01-concepto-y-mecanica.md](01-concepto-y-mecanica.md)), con la cantidad y tipo de botones que

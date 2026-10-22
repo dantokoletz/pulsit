@@ -103,7 +103,8 @@ require('sharp')('mi-imagen.png')
 ## 4. Convenciones de código
 
 - **Idioma**: comentarios y documentación en español; nombres de variables/funciones en inglés
-  (convención estándar de JS). Mensajes de UI visibles al jugador, en español.
+  (convención estándar de JS). Mensajes de UI visibles al jugador, en español rioplatense con **voseo** (`Memorizá`, `Observá`,
+  `Superá`), nunca tuteo — aplica también a la ficha de Play Store (`store-listing/`).
 - **Nombres de archivo**: `camelCase.js` para módulos JS, `kebab-case.md` para documentación.
 - **Módulos**: `gameLogic.js` debe permanecer libre de referencias a `document`/`window`/Web Audio;
   toda regla de negocio nueva va ahí primero, testeada unitariamente, y luego se conecta desde

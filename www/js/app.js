@@ -148,7 +148,7 @@ async function startGame(mode, config, phaseLabel, levelNumber = null) {
         if (state === GAME_STATE.AWAITING_INPUT) {
           setGameMessage('Tu turno');
         } else if (state === GAME_STATE.PLAYING_SEQUENCE) {
-          setGameMessage('Observa la secuencia...');
+          setGameMessage('Observá la secuencia...');
         }
       },
       async onRoundResult({ sequenceLength }) {
