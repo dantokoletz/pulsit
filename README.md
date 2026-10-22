@@ -167,15 +167,19 @@ PNG de cada densidad (`mipmap-mdpi` a `mipmap-xxxhdpi`: `ic_launcher.png`, `ic_l
 `ic_launcher_foreground.png`, `ic_launcher_background.png`) — o, más simple, usar el **Image Asset
 Studio** de Android Studio (clic derecho sobre `res/` → `New` → `Image Asset`) apuntando al SVG.
 
-## Reemplazar el logo de CauquenLabs (placeholder)
+## Logo de CauquenLabs
 
-`www/assets/logo-cauquenlabs.png` es un placeholder geométrico de 512×512 px generado
-automáticamente, usado en la pantalla de inicio y en "Acerca de" para representar a la empresa
-(distinto del ícono de la app, ver arriba). Para reemplazarlo una vez que CauquenLabs provea el
-logo real:
+`www/assets/logo-cauquenlabs.png` es el logo definitivo de CauquenLabs (512×512 px, fondo
+transparente, texto negro), usado en la pantalla de inicio y en "Acerca de" (distinto del ícono de
+la app, ver arriba). Como el texto es negro, el CSS (`.logo`, `.about-logo`) lo muestra sobre una
+placa clara redondeada para que no se pierda contra el fondo oscuro. Para cambiarlo, sobrescribir
+el archivo manteniendo el nombre y correr `npx cap sync`.
 
-1. Sobrescribir ese archivo (mantener el mismo nombre, mínimo 512×512 px, fondo transparente u
-   opaco según el diseño final).
-2. Correr `npx cap sync` para que se copie al proyecto Android.
-3. Quitar la nota "logo provisorio, en diseño" de la pantalla "Acerca de" (`www/index.html`,
-   sección `#screen-about`) y el texto equivalente del `alt` de la imagen.
+## Material de la ficha de Play Store (`store-listing/`)
+
+- `feature-graphic.png`: gráfico destacado de 1024×500 px, PNG de 24 bits sin alfa (como exige
+  Play Console). Se regenera con `node store-listing/gen-feature-graphic.mjs` (requiere `sharp`:
+  `npm install --no-save sharp`).
+- `screenshots/`: capturas de teléfono 1080×2400 para la ficha.
+
+Vive fuera de `www/` a propósito: todo lo que está en `www/` se copia al APK en cada `cap sync`.

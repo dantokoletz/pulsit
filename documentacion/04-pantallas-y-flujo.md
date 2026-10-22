@@ -75,8 +75,8 @@ después.
 ## 4.3 Pantalla "Acerca de" (`screen-about`)
 
 Contenido:
-- Logo de CauquenLabs (mismo archivo que la pantalla de inicio, `www/assets/logo-cauquenlabs.png`),
-  con una nota aclarando que es provisorio mientras la empresa no provea el diseño definitivo.
+- Logo de CauquenLabs (mismo archivo que la pantalla de inicio, `www/assets/logo-cauquenlabs.png`), sobre
+  una placa clara redondeada (el logo tiene texto negro y fondo transparente).
 - Descripción corta del juego.
 - **Empresa**: CauquenLabs.
 - **Desarrollador**: Daniel Antokoletz.
@@ -100,9 +100,11 @@ los valores por defecto si es la primera vez). El sonido **no** es parte de este
 ## 4.5 Pantalla de juego (`screen-game`)
 
 Contenido:
-- **Número de fase luminoso**: solo en modo campaña, muestra el número de fase actual (1-10) con
+- **Número de fase luminoso**: solo en modo campaña, muestra el número de fase actual (1-28) con
   un estilo de neón/glow. No se muestra en modo personalizado (no hay un "número de fase").
-- Barra de estado: fase actual (o "Modo personalizado").
+- Barra de estado: fase actual (o "Modo personalizado"). Número de fase, textos y barra de progreso
+  van sobre un panel oscuro translúcido para que se lean sobre la foto de circuito del fondo (lo
+  mismo el botón "Reiniciar nivel").
 - **Barra de progreso**: indica visualmente cuánto falta de la secuencia actual para superar la
   fase/partida (`sequenceLength / maxSequenceLength`), además del texto `Secuencia: X / N`.
 - Botón **"Menú"**: abandona la partida en curso y vuelve a la pantalla de inicio.

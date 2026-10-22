@@ -7,7 +7,7 @@
 
 ### Funciona
 
-- Lógica completa del modo campaña (10 fases, progresión 2→10, reposicionamiento según fase),
+- Lógica completa del modo campaña (28 fases: ciclo de 4 por cada cantidad de botones de 3 a 9, progresión 2→10, reposicionamiento según fase),
   implementada en `www/js/gameLogic.js` y orquestada por `www/js/game.js`.
 - Modo personalizado completo: configuración de botones (3-9), tipo de estímulo (colores/números/
   ambos), reposicionamiento y longitud máxima de secuencia, con validación y persistencia (el
@@ -26,7 +26,8 @@
   renderizan y responden al toque correctamente dentro del WebView nativo, sin errores en logcat.
 - Suite de tests: 58 tests (unitarios + integración) pasando, cubriendo reglas de negocio,
   persistencia, audio y los flujos completos de campaña y modo personalizado.
-- Logo placeholder 512×512 generado para CauquenLabs (`www/assets/logo-cauquenlabs.png`).
+- Logo definitivo de CauquenLabs (`www/assets/logo-cauquenlabs.png`, 512×512, fondo transparente),
+  mostrado sobre una placa clara para que el texto negro se lea sobre el fondo oscuro.
 - Tonos de botón rediseñados con mayor separación perceptible (terceras mayores en vez de grados
   de escala pentatónica), tras detectar en pruebas manuales que sonaban demasiado parecidos entre
   sí (ver `www/js/audio.js`).
@@ -68,8 +69,8 @@
   scroll. Verificado en navegador (sin overflow de página, `document.body.scrollHeight ===
   window.innerHeight`) y en emulador real con un tablero de 9 botones en horizontal.
 - **Pantalla "Acerca de"** (`screen-about`, nueva): descripción del juego, Empresa (CauquenLabs),
-  Desarrollador (Daniel Antokoletz) y el logo de CauquenLabs (mismo placeholder de la pantalla de
-  inicio), con una nota de que es provisorio. Accesible desde un botón nuevo en la pantalla de
+  Desarrollador (Daniel Antokoletz) y el logo de CauquenLabs (el mismo de la pantalla de
+  inicio). Accesible desde un botón nuevo en la pantalla de
   inicio.
 - **Ícono nativo de la app rediseñado**: el ícono por defecto era literalmente la plantilla
   genérica de Capacitor/Android Studio (fondo teal #26A69A con una grilla y una cara tipo robot),
@@ -114,12 +115,9 @@
 - **Subir el primer `.aab` a Play Console**: el `.aab` firmado ya se genera correctamente (ver
   "Funciona" y README.md, "Publicar en Google Play Store"); falta crear la app en Play Console,
   subir `Pulsit-release.aab` como build interno de prueba y aceptar Play App Signing.
-- **Logo definitivo de CauquenLabs**: actualmente hay un placeholder geométrico en
-  `www/assets/logo-cauquenlabs.png`, usado en la pantalla de inicio y en "Acerca de" para
-  representar a la empresa. Debe reemplazarse por el logo real manteniendo el mismo nombre de
-  archivo y dimensiones mínimas (512×512 px) — ver README.md, sección "Reemplazar el logo de
-  CauquenLabs". **Esto ya no bloquea el ícono nativo de la app** (ver "Funciona" más abajo: el
-  ícono es ahora un diseño propio de Pulsit, independiente de este logo).
+- **Capturas de la ficha de Play Store desactualizadas**: `store-listing/screenshots/` se tomaron
+  antes de la campaña de 28 fases, del logo definitivo y del panel legible de la barra de estado
+  (muestran "Fase 1 / 10"). Conviene rehacerlas antes de publicar la ficha.
 - **Pruebas en dispositivo físico**: todo lo verificado hasta ahora es en emuladores (teléfono y
   tablet); falta instalar `Pulsit-debug.apk` en un teléfono real (especialmente para confirmar por
   tacto el feedback háptico, que no se puede verificar desde el emulador/automatización).
@@ -263,15 +261,13 @@
   reemplazando los XML vectoriales de plantilla (`drawable/ic_launcher_background.xml`,
   `drawable-v24/ic_launcher_foreground.xml`, que se eliminaron por quedar sin uso) por PNG
   generados desde un SVG maestro versionado en `www/assets/icon-pulsit-source.svg`. Explícitamente
-  independiente del logo de CauquenLabs (que sigue pendiente, ver "Falta").
+  independiente del logo de CauquenLabs.
 
 ## Problemas conocidos / limitaciones
 
 - Todavía no se subió ningún `.aab` a Play Console (el bundle firmado ya existe, `Pulsit-release.aab`
   en la raíz del repo, pero falta crear la app en Play Console y hacer la primera subida — ver
   "Próximos pasos concretos").
-- El logo de CauquenLabs es un placeholder geométrico generado programáticamente, no el logo real
-  de marca (pendiente a propósito, por pedido explícito del usuario).
 - No hay pruebas automatizadas de UI/responsive más allá de lo verificado manualmente (emuladores
   de teléfono y tablet, ver `documentacion/07-criterios-de-aceptacion.md`); falta un dispositivo
   físico real.
@@ -289,8 +285,8 @@
    el rediseño visual se vea bien fuera del emulador.
 3. Crear la app en Play Console, subir `Pulsit-release.aab` (raíz del repo, ya firmado) como build
    interno de prueba, y aceptar Play App Signing en el proceso.
-4. Cuando CauquenLabs provea el logo definitivo: reemplazar `www/assets/logo-cauquenlabs.png` y
-   quitar la nota "provisorio" de la pantalla "Acerca de" (`www/index.html`). El ícono de la app
-   no necesita tocarse (ya es un diseño propio, independiente del logo).
+4. Rehacer las capturas de `store-listing/screenshots/` con la versión actual (28 fases, logo
+   definitivo, barra de estado legible) y subirlas a la ficha junto con
+   `store-listing/feature-graphic.png`.
 5. Etiquetar la siguiente versión (`git tag v0.2.0`) una vez subido el primer build de prueba a
    Play Console.

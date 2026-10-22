@@ -57,13 +57,14 @@ pulsit/
 │   │   ├── storage.js         # persistencia (Preferences / localStorage)
 │   │   └── custom.js          # formulario de modo personalizado
 │   └── assets/
-│       ├── logo-cauquenlabs.png    # PLACEHOLDER — reemplazar por el logo real de CauquenLabs
+│       ├── logo-cauquenlabs.png    # logo definitivo de CauquenLabs (fondo transparente)
 │       ├── background-circuit.webp # fondo ACTIVO de las 3 pantallas — reemplazable (ver abajo)
 │       ├── background-circuit.svg  # alternativa vectorial generada por código (no referenciada)
 │       ├── icon-pulsit-source.svg  # fuente del ícono nativo de la app (ver README.md)
 │       └── icon-pulsit-preview.png # vista previa 512×512 del ícono, no usada por la app
 ├── android/                   # proyecto Android generado por Capacitor
 │   └── ...                    # NO MODIFICAR A MANO salvo config nativa justificada (ver §5)
+├── store-listing/             # material de la ficha de Play Store (NO va en el APK, fuera de www/)
 ├── documentacion/             # documentación FUNCIONAL (qué hace la app, para humanos y agentes)
 ├── test/                      # tests unitarios e integración (Vitest)
 └── .project-corpus/           # estado de continuidad entre sesiones de agentes de IA
@@ -78,7 +79,7 @@ propio de Pulsit (no depende del logo de CauquenLabs), con fuente vectorial vers
 `www/assets/icon-pulsit-source.svg`. Ver la sección "Ícono de la app" de `README.md` para cómo
 regenerarlo si se modifica.
 
-**Assets reemplazables**: `www/assets/logo-cauquenlabs.png` (logo de CauquenLabs, placeholder,
+**Assets reemplazables**: `www/assets/logo-cauquenlabs.png` (logo definitivo de CauquenLabs,
 usado en la pantalla de inicio y en "Acerca de" — distinto del ícono de la app) y
 `www/assets/background-circuit.webp` (fondo activo de las 3 pantallas, foto de circuito impreso)
 están pensados para sobrescribirse sin tocar código: el CSS los referencia por nombre de archivo
